@@ -61,7 +61,7 @@ install_prerequisites() {
     newgrp docker
 
     # Create a socket for the slurmrestd
-    mkdir -pv /var/spool/slurmrest
+    mkdir -pv /var/spool/slurmrestd
     touch /var/spool/slurmrestd/slurmrestd.socket
     chown -R slurmrestd:slurmrestd /var/spool/slurmrestd
 
