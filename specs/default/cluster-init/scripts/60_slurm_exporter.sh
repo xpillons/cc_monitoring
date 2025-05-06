@@ -33,7 +33,7 @@ install_prerequisites() {
     # Configure JWT and slurmrestd
 
     # Create a local key
-    mkdir -p /var/spool/slurm/statesave
+    mkdir -pv /var/spool/slurm/statesave
     dd if=/dev/random of=/var/spool/slurm/statesave/jwt_hs256.key bs=32 count=1
     chown slurm:slurm /var/spool/slurm/statesave/jwt_hs256.key
     chmod 0600 /var/spool/slurm/statesave/jwt_hs256.key
@@ -45,15 +45,23 @@ install_prerequisites() {
     sed -i '/^# Additional config/i '"$lines_to_insert"'' /etc/slurm/slurm.conf
 
     # Create an unprivileged user for slurmrestd
-    useradd -M -r -s /usr/sbin/nologin -U slurmrestd
+    if id "slurmrestd" &>/dev/null; then
+        echo "User slurmrestd exists"
+    else
+        useradd -M -r -s /usr/sbin/nologin -U slurmrestd
+    fi    
 
     # Add user to the docker group
-    usermod -aG docker slurmrestd
+    if getent group docker | grep -qw slurmrestd; then
+        echo "User slurmrestd belongs to group docker"
+    else
+        usermod -aG docker slurmrestd
+    fi
+    
     newgrp docker
 
-
     # Create a socket for the slurmrestd
-    mkdir /var/spool/slurmrest
+    mkdir -pv /var/spool/slurmrest
     touch /var/spool/slurmrestd/slurmrestd.socket
     chown -R slurmrestd:slurmrestd /var/spool/slurmrestd
 
