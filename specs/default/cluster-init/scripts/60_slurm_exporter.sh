@@ -93,7 +93,7 @@ install_slurm_exporter() {
     
     # Run Slurm Exporter in a container
     unset SLURM_JWT; export $(scontrol token)
-    docker run -v /var:/var -e SLURM_JWT=${SLURM_JWT} -d -rm \
+    docker run -v /var:/var -e SLURM_JWT=${SLURM_JWT} -d --rm \
            -p ${SLURM_EXPORTER_PORT}:8080 slinky.slurm.net/slurm-exporter:0.3.0
 }
 
