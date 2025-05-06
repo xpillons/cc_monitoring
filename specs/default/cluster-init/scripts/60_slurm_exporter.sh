@@ -94,7 +94,7 @@ install_slurm_exporter() {
 
     
     # Run Slurm Exporter in a container
-    unset SLURM_JWT; export $(scontrol token) # Issue => token expires after 30mn
+    unset SLURM_JWT; export $(scontrol token lifespan=31536000) # Issue => token expires after 1year
     # The following command run sucessfully
     # go run ./cmd/main.go -server http://localhost:6820 -metrics-bind-address ":9080" -per-user-metrics true
     # Added options to specify the local slurmrestd socket and per user metrics
