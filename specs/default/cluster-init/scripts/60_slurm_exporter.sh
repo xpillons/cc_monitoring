@@ -41,6 +41,8 @@ install_prerequisites() {
     chmod 0755 /var/spool/slurm/statesave
 
     # Add to JWT Auth to the slurm.conf
+    # BUG: There is no #Additional config in the slurm.conf
+    # QUESTION: it should use the /sched/ccws/slurm.conf instead of the /sched/slurm.conf as the later is a link to the former
     lines_to_insert="AuthAltTypes=auth/jwt\nAuthAltParameters=jwt_key=/var/spool/slurm/statesave/jwt_hs256.key\n"
     sed -i '/^# Additional config/i '"$lines_to_insert"'' /etc/slurm/slurm.conf
 
@@ -92,9 +94,12 @@ install_slurm_exporter() {
 
     
     # Run Slurm Exporter in a container
-    unset SLURM_JWT; export $(scontrol token)
+    unset SLURM_JWT; export $(scontrol token) # Issue => token expires after 30mn
+    # The following command run sucessfully
+    # go run ./cmd/main.go -server http://localhost:6820 -metrics-bind-address ":9080" -per-user-metrics true
+    # Added options to specify the local slurmrestd socket and per user metrics
     docker run -v /var:/var -e SLURM_JWT=${SLURM_JWT} -d --rm \
-           -p ${SLURM_EXPORTER_PORT}:8080 slinky.slurm.net/slurm-exporter:0.3.0
+           -p ${SLURM_EXPORTER_PORT}:8080 slinky.slurm.net/slurm-exporter:0.3.0 -server http://localhost:6820 -per-user-metrics true
 }
 
 function add_scraper() {
