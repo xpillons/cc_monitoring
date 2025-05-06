@@ -13,7 +13,7 @@ if ! is_monitoring_enabled; then
 fi
 
 # Only install Slurm Exporter on Scheduler
-if ! is_scheduler(); then
+if ! is_scheduler ; then
     echo "Do not install the Slurm Exporter since this is not the scheduler." 
     exit 0
 fi
