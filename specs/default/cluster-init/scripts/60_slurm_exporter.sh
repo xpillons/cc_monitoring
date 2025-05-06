@@ -83,6 +83,7 @@ install_slurm_exporter() {
 
     # Build the exporter
     pushd /tmp
+    rm -rf slurm-exporter
     git clone https://github.com/SlinkyProject/slurm-exporter.git
     cd slurm-exporter
     # Equivalent to:  docker build . -t slinky.slurm.net/slurm-exporter:0.3.0
