@@ -64,6 +64,8 @@ DCGM_FI_DEV_NVLINK_COUNT_LINK_RECOVERY_FAILED_EVENTS, counter, Total number of t
 DCGM_FI_DEV_NVLINK_COUNT_RX_MALFORMED_PACKET_ERRORS, counter, Total number of packets received on the port that contain malformed p
 DCGM_FI_PROF_NVLINK_L0_TX_BYTES, gauge, Nvlink Port Raw bandwidth (TX)
 DCGM_FI_PROF_NVLINK_L0_RX_BYTES, gauge, Nvlink Port Raw bandwidth (RX)
+DCGM_FI_PROF_NVLINK_TX_BYTES, gauge, Nvlink Port Raw bandwidth (TX)
+DCGM_FI_PROF_NVLINK_RX_BYTES, gauge, Nvlink Port Raw bandwidth (RX)
 DCGM_FI_PROF_NVDEC0_ACTIVE, gauge, Decoder utilization (in %)
 DCGM_FI_DEV_NVLINK_COUNT_RX_SYMBOL_ERRORS, counter, This counter provides information on error bits that were not corrected by phy
 
