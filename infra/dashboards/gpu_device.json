@@ -903,7 +903,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "",
+            "axisLabel": "XID Error Code",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
@@ -937,8 +937,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           }
@@ -1007,6 +1006,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": {
+        "default": false,
         "type": "prometheus",
         "uid": "${Datasource}"
       },
@@ -1021,7 +1021,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "",
+            "axisLabel": "Errors",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
@@ -1056,8 +1056,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1077,7 +1076,7 @@
         "y": 46
       },
       "hiddenSeries": false,
-      "id": 46,
+      "id": 56,
       "legend": {
         "alignAsTable": true,
         "avg": false,
@@ -1096,7 +1095,9 @@
       "options": {
         "alertThreshold": true,
         "legend": {
-          "calcs": [],
+          "calcs": [
+            "lastNotNull"
+          ],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": true
@@ -1116,8 +1117,14 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "dcgm_fi_dev_ecc_sbe_agg_total{instance=~\"$instance\", gpu=~\"$gpu\"}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "daamw-mscycle"
+          },
+          "editorMode": "code",
+          "expr": "increase(dcgm_fi_dev_ecc_sbe_agg_total{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval])",
           "legendFormat": "GPU {{gpu}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -1164,6 +1171,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": {
+        "default": false,
         "type": "prometheus",
         "uid": "${Datasource}"
       },
@@ -1178,7 +1186,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "",
+            "axisLabel": "Errors",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
@@ -1213,8 +1221,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1234,7 +1241,7 @@
         "y": 46
       },
       "hiddenSeries": false,
-      "id": 47,
+      "id": 57,
       "legend": {
         "alignAsTable": true,
         "avg": false,
@@ -1253,7 +1260,9 @@
       "options": {
         "alertThreshold": true,
         "legend": {
-          "calcs": [],
+          "calcs": [
+            "lastNotNull"
+          ],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": true
@@ -1273,8 +1282,14 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "dcgm_fi_dev_ecc_dbe_agg_total{instance=~\"$instance\", gpu=~\"$gpu\"}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "daamw-mscycle"
+          },
+          "editorMode": "code",
+          "expr": "increase(dcgm_fi_dev_ecc_dbe_agg_total{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval])",
           "legendFormat": "GPU {{gpu}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -1321,6 +1336,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": {
+        "default": false,
         "type": "prometheus",
         "uid": "${Datasource}"
       },
@@ -1335,7 +1351,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "",
+            "axisLabel": "Errors",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
@@ -1369,8 +1385,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1390,7 +1405,7 @@
         "y": 54
       },
       "hiddenSeries": false,
-      "id": 48,
+      "id": 58,
       "legend": {
         "alignAsTable": true,
         "avg": false,
@@ -1409,7 +1424,9 @@
       "options": {
         "alertThreshold": true,
         "legend": {
-          "calcs": [],
+          "calcs": [
+            "lastNotNull"
+          ],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": true
@@ -1433,8 +1450,10 @@
             "type": "prometheus",
             "uid": "${Datasource}"
           },
-          "expr": "dcgm_fi_dev_ecc_sbe_vol_total{instance=~\"$instance\", gpu=~\"$gpu\"}",
+          "editorMode": "code",
+          "expr": "increase(dcgm_fi_dev_ecc_sbe_vol_total{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval])",
           "legendFormat": "GPU {{gpu}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -1481,6 +1500,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": {
+        "default": false,
         "type": "prometheus",
         "uid": "${Datasource}"
       },
@@ -1495,7 +1515,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "",
+            "axisLabel": "Errors",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
@@ -1530,8 +1550,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1551,7 +1570,7 @@
         "y": 54
       },
       "hiddenSeries": false,
-      "id": 49,
+      "id": 59,
       "legend": {
         "alignAsTable": true,
         "avg": false,
@@ -1570,7 +1589,9 @@
       "options": {
         "alertThreshold": true,
         "legend": {
-          "calcs": [],
+          "calcs": [
+            "lastNotNull"
+          ],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": true
@@ -1590,8 +1611,14 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "dcgm_fi_dev_ecc_dbe_vol_total{instance=~\"$instance\", gpu=~\"$gpu\"}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "daamw-mscycle"
+          },
+          "editorMode": "code",
+          "expr": "increase(dcgm_fi_dev_ecc_dbe_vol_total{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval])",
           "legendFormat": "GPU {{gpu}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -1661,7 +1688,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "",
+            "axisLabel": "Throttle Reason Code",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
@@ -1697,8 +1724,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1716,7 +1742,7 @@
         "x": 0,
         "y": 63
       },
-      "id": 54,
+      "id": 55,
       "options": {
         "legend": {
           "calcs": [
@@ -1751,6 +1777,7 @@
     },
     {
       "datasource": {
+        "default": false,
         "type": "prometheus",
         "uid": "${Datasource}"
       },
@@ -1764,7 +1791,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "",
+            "axisLabel": "Seconds Throttled",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
@@ -1795,21 +1822,18 @@
           },
           "decimals": 2,
           "mappings": [],
-          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
                 "value": 80
               }
             ]
-          },
-          "unit": "s"
+          }
         },
         "overrides": []
       },
@@ -1819,7 +1843,7 @@
         "x": 12,
         "y": 63
       },
-      "id": 51,
+      "id": 60,
       "options": {
         "legend": {
           "calcs": [
@@ -1843,7 +1867,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "dcgm_fi_dev_thermal_violation{instance=~\"$instance\", gpu=~\"$gpu\"} / 10^6",
+          "expr": "increase(dcgm_fi_dev_thermal_violation{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval]) / 1e9",
           "legendFormat": "GPU {{gpu}}",
           "range": true,
           "refId": "A"
@@ -1854,6 +1878,7 @@
     },
     {
       "datasource": {
+        "default": false,
         "type": "prometheus",
         "uid": "${Datasource}"
       },
@@ -1867,7 +1892,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "",
+            "axisLabel": "Seconds Throttled",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
@@ -1898,21 +1923,18 @@
           },
           "decimals": 2,
           "mappings": [],
-          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
                 "value": 80
               }
             ]
-          },
-          "unit": "s"
+          }
         },
         "overrides": []
       },
@@ -1922,7 +1944,7 @@
         "x": 0,
         "y": 71
       },
-      "id": 52,
+      "id": 61,
       "options": {
         "legend": {
           "calcs": [
@@ -1946,7 +1968,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "dcgm_fi_dev_power_violation{instance=~\"$instance\", gpu=~\"$gpu\"} / 10^6",
+          "expr": "increase(dcgm_fi_dev_power_violation{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval]) / 1e9",
           "legendFormat": "GPU {{gpu}}",
           "range": true,
           "refId": "A"
@@ -2062,6 +2084,6 @@
   "timezone": "browser",
   "title": "GPU Device View",
   "uid": "9Qxi6EuNVxaaaaa",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }
