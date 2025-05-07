@@ -25,7 +25,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": null,
+  "id": 151,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -897,15 +897,40 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic"
           },
           "custom": {
-            "align": "left",
-            "cellOptions": {
-              "type": "auto"
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
             },
-            "filterable": true,
-            "inspect": false
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
           },
           "mappings": [],
           "thresholds": {
@@ -921,30 +946,25 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 9,
+        "h": 8,
         "w": 24,
         "x": 0,
         "y": 37
       },
-      "id": 45,
+      "id": 53,
       "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "enablePagination": true,
-          "fields": "",
-          "reducer": [
-            "sum"
+        "legend": {
+          "calcs": [
+            "lastNotNull"
           ],
-          "show": false
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
         },
-        "showHeader": true,
-        "sortBy": [
-          {
-            "desc": false,
-            "displayName": "Time"
-          }
-        ]
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
       },
       "pluginVersion": "11.2.8+security-01",
       "targets": [
@@ -955,81 +975,14 @@
           },
           "editorMode": "code",
           "expr": "dcgm_fi_dev_xid_errors{instance=~\"$instance\", gpu=~\"$gpu\"}",
-          "format": "table",
-          "legendFormat": "XID",
+          "format": "time_series",
+          "legendFormat": "GPU {{gpu}}",
           "range": true,
           "refId": "A"
         }
       ],
       "title": "XID Codes",
-      "transformations": [
-        {
-          "id": "filterFieldsByName",
-          "options": {
-            "include": {
-              "names": [
-                "err_code",
-                "gpu"
-              ]
-            }
-          }
-        },
-        {
-          "id": "groupBy",
-          "options": {
-            "fields": {
-              "Time": {
-                "aggregations": [
-                  "last"
-                ],
-                "operation": "aggregate"
-              },
-              "Value": {
-                "aggregations": [
-                  "last"
-                ],
-                "operation": "aggregate"
-              },
-              "err_code": {
-                "aggregations": [],
-                "operation": "groupby"
-              },
-              "gpu": {
-                "aggregations": [],
-                "operation": "groupby"
-              },
-              "pci_id": {
-                "aggregations": [],
-                "operation": "groupby"
-              },
-              "time_stamp": {
-                "aggregations": [],
-                "operation": "groupby"
-              }
-            }
-          }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {},
-            "includeByName": {},
-            "indexByName": {
-              "err_code": 1,
-              "gpu": 0
-            },
-            "renameByName": {
-              "Value (last)": "XID",
-              "err_code": "XID Error Code",
-              "gpu": "GPU ID",
-              "pci_id": "PCI ID",
-              "time_stamp": "Time Stamp",
-              "time_stamp (last)": "Time Stamp"
-            }
-          }
-        }
-      ],
-      "type": "table"
+      "type": "timeseries"
     },
     {
       "collapsed": false,
@@ -1041,7 +994,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 46
+        "y": 45
       },
       "id": 23,
       "panels": [],
@@ -1121,7 +1074,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 47
+        "y": 46
       },
       "hiddenSeries": false,
       "id": 46,
@@ -1278,7 +1231,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 47
+        "y": 46
       },
       "hiddenSeries": false,
       "id": 47,
@@ -1434,7 +1387,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 55
+        "y": 54
       },
       "hiddenSeries": false,
       "id": 48,
@@ -1595,7 +1548,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 55
+        "y": 54
       },
       "hiddenSeries": false,
       "id": 49,
@@ -1685,7 +1638,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 63
+        "y": 62
       },
       "id": 25,
       "panels": [],
@@ -1694,10 +1647,11 @@
     },
     {
       "datasource": {
+        "default": false,
         "type": "prometheus",
         "uid": "${Datasource}"
       },
-      "description": "Current throttle code ",
+      "description": "Current throttle event reasons code ",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1760,9 +1714,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 64
+        "y": 63
       },
-      "id": 50,
+      "id": 54,
       "options": {
         "legend": {
           "calcs": [
@@ -1786,7 +1740,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "dcgm_fi_dev_clock_throttle_reasons{instance=~\"$instance\", gpu=~\"$gpu\"}",
+          "expr": "dcgm_fi_dev_clocks_event_reasons{instance=~\"$instance\", gpu=~\"$gpu\"}",
           "legendFormat": "GPU {{gpu}}",
           "range": true,
           "refId": "A"
@@ -1863,7 +1817,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 64
+        "y": 63
       },
       "id": 51,
       "options": {
@@ -1966,7 +1920,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 72
+        "y": 71
       },
       "id": 52,
       "options": {
@@ -2032,8 +1986,8 @@
       {
         "current": {
           "selected": false,
-          "text": "ccw-login-1",
-          "value": "ccw-login-1"
+          "text": "aks-agentpool-38703046-vmss000000",
+          "value": "aks-agentpool-38703046-vmss000000"
         },
         "datasource": {
           "type": "prometheus",
