@@ -884,8 +884,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -941,7 +940,7 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "dcgm_fi_prof_nvlink_rx_bytes{instance=~\"$instance\", gpu=~\"$gpu\"}",
+          "expr": "rate(dcgm_fi_prof_nvlink_rx_bytes{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval])",
           "legendFormat": "GPU {{gpu}} - receive",
           "range": true,
           "refId": "A"
@@ -952,7 +951,7 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "dcgm_fi_prof_nvlink_tx_bytes{instance=~\"$instance\", gpu=~\"$gpu\"}",
+          "expr": "rate(dcgm_fi_prof_nvlink_tx_bytes{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval])",
           "hide": false,
           "instant": false,
           "legendFormat": "GPU {{gpu}} - transmit",
@@ -1041,8 +1040,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1098,7 +1096,7 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "dcgm_fi_prof_pcie_rx_bytes{instance=~\"$instance\", gpu=~\"$gpu\"}",
+          "expr": "rate(dcgm_fi_prof_pcie_rx_bytes{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval])",
           "legendFormat": "GPU {{gpu}} - receive",
           "range": true,
           "refId": "A"
@@ -1109,7 +1107,7 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "dcgm_fi_prof_pcie_tx_bytes{instance=~\"$instance\", gpu=~\"$gpu\"}",
+          "expr": "rate(dcgm_fi_prof_pcie_tx_bytes{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval])",
           "hide": false,
           "instant": false,
           "legendFormat": "GPU {{gpu}} - transmit",
@@ -1150,8 +1148,8 @@
       {
         "current": {
           "selected": false,
-          "text": "ccw-login-1",
-          "value": "ccw-login-1"
+          "text": "aks-agentpool-38703046-vmss000000",
+          "value": "aks-agentpool-38703046-vmss000000"
         },
         "datasource": {
           "type": "prometheus",
@@ -1226,6 +1224,6 @@
   "timezone": "",
   "title": "GPU Profiling View",
   "uid": "gTlkDyuGkx",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }
