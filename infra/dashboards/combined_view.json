@@ -2938,12 +2938,7 @@
           "show": false
         },
         "showHeader": true,
-        "sortBy": [
-          {
-            "desc": false,
-            "displayName": "GPU"
-          }
-        ]
+        "sortBy": []
       },
       "pluginVersion": "11.2.8+security-01",
       "targets": [
@@ -3038,6 +3033,18 @@
               "time_stamp (last)": "Time Stamp"
             }
           }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "desc": true,
+                "field": "XID Code"
+              }
+            ]
+          }
         }
       ],
       "type": "table"
@@ -3091,7 +3098,7 @@
                       "1": {
                         "color": "green",
                         "index": 2,
-                        "text": "Idle (Normal)"
+                        "text": "1 Idle (Normal)"
                       },
                       "4": {
                         "color": "semi-dark-red",
@@ -3152,12 +3159,7 @@
           "show": false
         },
         "showHeader": true,
-        "sortBy": [
-          {
-            "desc": false,
-            "displayName": "GPU"
-          }
-        ]
+        "sortBy": []
       },
       "pluginVersion": "11.2.8+security-01",
       "targets": [
@@ -3248,6 +3250,18 @@
               "time_stamp": "Time Stamp",
               "time_stamp (last)": "Time Stamp"
             }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "desc": true,
+                "field": "Throttle Code"
+              }
+            ]
           }
         }
       ],
@@ -5875,12 +5889,7 @@
           "show": false
         },
         "showHeader": true,
-        "sortBy": [
-          {
-            "desc": true,
-            "displayName": "Link Health"
-          }
-        ]
+        "sortBy": []
       },
       "pluginVersion": "11.2.8+security-01",
       "targets": [
@@ -5975,6 +5984,17 @@
               "time_stamp": "Time Stamp",
               "time_stamp (last)": "Time Stamp"
             }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "field": "Link Health"
+              }
+            ]
           }
         }
       ],
@@ -6780,6 +6800,6 @@
   "timezone": "browser",
   "title": "Combined Node, IB, GPU & NVLink Metrics Dashboard",
   "uid": "9Qxi6EuNVsx",
-  "version": 2,
+  "version": 1,
   "weekStart": ""
 }

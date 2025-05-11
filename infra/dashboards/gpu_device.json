@@ -1081,6 +1081,18 @@
               "time_stamp (last)": "Time Stamp"
             }
           }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "desc": true,
+                "field": "XID Code"
+              }
+            ]
+          }
         }
       ],
       "type": "table"
@@ -1827,7 +1839,7 @@
                       "1": {
                         "color": "green",
                         "index": 2,
-                        "text": "Idle (Normal)"
+                        "text": "1 Idle (Normal)"
                       },
                       "4": {
                         "color": "semi-dark-red",
@@ -1984,6 +1996,18 @@
               "time_stamp": "Time Stamp",
               "time_stamp (last)": "Time Stamp"
             }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "desc": true,
+                "field": "Throttle Code"
+              }
+            ]
           }
         }
       ],
@@ -2301,12 +2325,7 @@
           "show": false
         },
         "showHeader": true,
-        "sortBy": [
-          {
-            "desc": true,
-            "displayName": "Link Health"
-          }
-        ]
+        "sortBy": []
       },
       "pluginVersion": "11.2.8+security-01",
       "targets": [
@@ -2401,6 +2420,17 @@
               "time_stamp": "Time Stamp",
               "time_stamp (last)": "Time Stamp"
             }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "field": "Link Health"
+              }
+            ]
           }
         }
       ],
@@ -3066,9 +3096,9 @@
       },
       {
         "current": {
-          "selected": false,
-          "text": "aks-agentpool-38703046-vmss000000",
-          "value": "aks-agentpool-38703046-vmss000000"
+          "selected": true,
+          "text": "gb200-vashon-9427-01",
+          "value": "gb200-vashon-9427-01"
         },
         "datasource": {
           "type": "prometheus",
@@ -3143,6 +3173,6 @@
   "timezone": "browser",
   "title": "GPU Device View",
   "uid": "9Qxi6EuNVx",
-  "version": 3,
+  "version": 1,
   "weekStart": ""
 }

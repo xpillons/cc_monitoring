@@ -3038,6 +3038,18 @@
               "time_stamp (last)": "Time Stamp"
             }
           }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "desc": true,
+                "field": "XID Code"
+              }
+            ]
+          }
         }
       ],
       "type": "table"
@@ -3091,7 +3103,7 @@
                       "1": {
                         "color": "green",
                         "index": 2,
-                        "text": "Idle (Normal)"
+                        "text": "1 Idle (Normal)"
                       },
                       "4": {
                         "color": "semi-dark-red",
@@ -3248,6 +3260,18 @@
               "time_stamp": "Time Stamp",
               "time_stamp (last)": "Time Stamp"
             }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "desc": true,
+                "field": "Throttle Code"
+              }
+            ]
           }
         }
       ],
@@ -5367,12 +5391,7 @@
           "show": false
         },
         "showHeader": true,
-        "sortBy": [
-          {
-            "desc": true,
-            "displayName": "Link Health"
-          }
-        ]
+        "sortBy": []
       },
       "pluginVersion": "11.2.8+security-01",
       "targets": [
@@ -5467,6 +5486,17 @@
               "time_stamp": "Time Stamp",
               "time_stamp (last)": "Time Stamp"
             }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "field": "Link Health"
+              }
+            ]
           }
         }
       ],
@@ -6132,7 +6162,7 @@
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "aks-hpcskus-38703046-vmss000000",
           "value": "aks-hpcskus-38703046-vmss000000"
         },
@@ -6269,8 +6299,8 @@
     ]
   },
   "timezone": "browser",
-  "title": "Combined Node, IB, GPU & NVLink Metrics Dashboard (w/o GPU Profiling)_test2",
+  "title": "Combined Node, IB, GPU & NVLink Metrics Dashboard (w/o GPU Profiling)",
   "uid": "9Qxi6EuNVsxk",
-  "version": 2,
+  "version": 1,
   "weekStart": ""
 }
