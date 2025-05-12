@@ -62,7 +62,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "",
+            "axisLabel": "bytes out (-) / in (+)",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
@@ -427,7 +427,7 @@
         "type": "prometheus",
         "uid": "${Datasource}"
       },
-      "description": "Total number of outbound packets discarded by the port because the port is down or congested.",
+      "description": "Total number of packets containing an error that were received on the port.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -437,7 +437,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "",
+            "axisLabel": "Errors",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
@@ -490,7 +490,7 @@
         "x": 0,
         "y": 18
       },
-      "id": 18,
+      "id": 22,
       "options": {
         "legend": {
           "calcs": [
@@ -513,108 +513,7 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "node_infiniband_port_discards_transmitted_total{instance=~\"$instance\", device!=\"mlx5_an0\"}",
-          "legendFormat": "{{device}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Port Xmit Discards",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "default": false,
-        "type": "prometheus",
-        "uid": "${Datasource}"
-      },
-      "description": "Total number of packets containing an error that were received on the port.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 40,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 18
-      },
-      "id": 19,
-      "options": {
-        "legend": {
-          "calcs": [
-            "last"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "9.0.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${Datasource}"
-          },
-          "editorMode": "code",
-          "expr": "node_infiniband_port_errors_received_total{instance=~\"$instance\", device!=\"mlx5_an0\"}",
+          "expr": "increase(node_infiniband_port_errors_received_total{instance=~\"$instance\", device!=\"mlx5_an0\"}[$__rate_interval])",
           "legendFormat": "{{device}}",
           "range": true,
           "refId": "A"
@@ -639,7 +538,108 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "",
+            "axisLabel": "Errors",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 40,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 18
+      },
+      "id": 23,
+      "options": {
+        "legend": {
+          "calcs": [
+            "last"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "9.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${Datasource}"
+          },
+          "editorMode": "code",
+          "expr": "increase(node_infiniband_port_constraint_errors_received_total{instance=~\"$instance\", device!=\"mlx5_an0\"}[$__rate_interval])",
+          "legendFormat": "{{device}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Port Rcv Constraint Errors",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "default": false,
+        "type": "prometheus",
+        "uid": "${Datasource}"
+      },
+      "description": "Number of ticks during which the port had data to transmit but no data was sent during the entire tick",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "ticks/sec",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
@@ -692,7 +692,7 @@
         "x": 0,
         "y": 26
       },
-      "id": 20,
+      "id": 24,
       "options": {
         "legend": {
           "calcs": [
@@ -715,13 +715,13 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "node_infiniband_port_constraint_errors_received_total{instance=~\"$instance\", device!=\"mlx5_an0\"}",
+          "expr": "rate(node_infiniband_port_transmit_wait_total{instance=~\"$instance\", device!=\"mlx5_an0\"}[$__rate_interval])",
           "legendFormat": "{{device}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Port Rcv Constraint Errors",
+      "title": "Port Xmit Wait",
       "type": "timeseries"
     },
     {
@@ -740,7 +740,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "",
+            "axisLabel": "Errors",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
@@ -793,7 +793,7 @@
         "x": 12,
         "y": 26
       },
-      "id": 21,
+      "id": 25,
       "options": {
         "legend": {
           "calcs": [
@@ -816,13 +816,114 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "node_infiniband_port_constraint_errors_transmitted_total{instance=~\"$instance\", device!=\"mlx5_an0\"}",
+          "expr": "increase(node_infiniband_port_constraint_errors_transmitted_total{instance=~\"$instance\", device!=\"mlx5_an0\"}[$__rate_interval])",
           "legendFormat": "{{device}}",
           "range": true,
           "refId": "A"
         }
       ],
       "title": "Port Xmit Constraint Errors",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "default": false,
+        "type": "prometheus",
+        "uid": "${Datasource}"
+      },
+      "description": "Total number of outbound packets discarded by the port because the port is down or congested.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Discards",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 40,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 34
+      },
+      "id": 26,
+      "options": {
+        "legend": {
+          "calcs": [
+            "last"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "9.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${Datasource}"
+          },
+          "editorMode": "code",
+          "expr": "increase(node_infiniband_port_discards_transmitted_total{instance=~\"$instance\", device!=\"mlx5_an0\"}[$__rate_interval])",
+          "legendFormat": "{{device}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Port Xmit Discards",
       "type": "timeseries"
     }
   ],
@@ -855,8 +956,8 @@
       {
         "current": {
           "selected": false,
-          "text": "prometheus",
-          "value": "ccw-login-1"
+          "text": "aks-agentpool-38703046-vmss000000",
+          "value": "aks-agentpool-38703046-vmss000000"
         },
         "datasource": {
           "type": "prometheus",
@@ -933,6 +1034,6 @@
   "timezone": "browser",
   "title": "Infiniband View",
   "uid": "baxV7f9Gzc",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }

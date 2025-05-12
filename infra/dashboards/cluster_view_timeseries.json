@@ -4,8 +4,9 @@
       {
         "builtIn": 1,
         "datasource": {
-          "type": "grafana",
-          "uid": "-- Grafana --"
+          "default": false,
+          "type": "prometheus",
+          "uid": "${Datasource}"
         },
         "enable": true,
         "hide": true,
@@ -21,7 +22,7 @@
       }
     ]
   },
-  "description": "Combined Node, IB, GPU & NVLink Metrics Dashboard (w/o GPU Profiling)",
+  "description": "Provides overview of cluster CPU, GPU, IB & NVLink metrics ",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
@@ -37,7 +38,7 @@
         "x": 0,
         "y": 0
       },
-      "id": 1000,
+      "id": 207,
       "panels": [],
       "title": "Node System Metrics",
       "type": "row"
@@ -48,15 +49,44 @@
         "type": "prometheus",
         "uid": "${Datasource}"
       },
-      "description": "Node Spec",
+      "description": "Load average by node",
       "fieldConfig": {
         "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
           "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "load",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 40,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
             },
-            "inspect": false
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
           },
           "mappings": [],
           "thresholds": {
@@ -76,557 +106,68 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 6,
-        "w": 9,
+        "h": 8,
+        "w": 12,
         "x": 0,
         "y": 1
       },
-      "id": 2017,
+      "id": 110,
       "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
+        "legend": {
+          "calcs": [
+            "max",
+            "mean"
           ],
-          "show": false
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
         },
-        "showHeader": true,
-        "sortBy": [
-          {
-            "desc": true,
-            "displayName": "node_uname_info"
-          }
-        ]
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
       },
-      "pluginVersion": "11.2.8+security-01",
       "targets": [
         {
           "datasource": {
+            "default": false,
             "type": "prometheus",
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "node_uname_info{instance=~\"$instance\"}",
+          "expr": "(avg by(instance) (node_load1)) * ($Operation== bool 1) + (min by(instance) (node_load1)) * ($Operation== bool 2) + (max by(instance) (node_load1)) * ($Operation== bool 3)",
+          "legendFormat": "{{instance}} - 1m",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "default": false,
+            "type": "prometheus",
+            "uid": "${Datasource}"
+          },
+          "editorMode": "code",
+          "expr": "(avg by(instance) (node_load5{instance=~\"$instance\"})) * ($Operation== bool 1) + (min by(instance) (node_load5{instance=~\"$instance\"})) * ($Operation== bool 2) + (max by(instance) (node_load5{instance=~\"$instance\"})) * ($Operation== bool 3)",
           "hide": false,
-          "instant": false,
-          "legendFormat": "__auto",
+          "legendFormat": "{{instance}} - 5m",
           "range": true,
-          "refId": "A"
-        }
-      ],
-      "transformations": [
-        {
-          "id": "joinByField",
-          "options": {
-            "byField": "Time",
-            "mode": "outer"
-          }
+          "refId": "B"
         },
-        {
-          "id": "labelsToFields",
-          "options": {
-            "keepLabels": [
-              "nodename",
-              "release",
-              "sysname",
-              "machine"
-            ],
-            "mode": "rows"
-          }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {},
-            "includeByName": {},
-            "indexByName": {},
-            "renameByName": {
-              "label": "Specs",
-              "value": "Values"
-            }
-          }
-        }
-      ],
-      "type": "table"
-    },
-    {
-      "datasource": {
-        "default": false,
-        "type": "prometheus",
-        "uid": "${Datasource}"
-      },
-      "description": "Average CPU Utilization",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "fieldMinMax": true,
-          "mappings": [],
-          "thresholds": {
-            "mode": "percentage",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 5,
-        "x": 9,
-        "y": 1
-      },
-      "id": 2015,
-      "options": {
-        "minVizHeight": 75,
-        "minVizWidth": 75,
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "sizing": "auto"
-      },
-      "pluginVersion": "11.2.8+security-01",
-      "targets": [
         {
           "datasource": {
+            "default": false,
             "type": "prometheus",
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "100 * (1 - avg(rate(node_cpu_seconds_total{mode=\"idle\", instance=\"$instance\"}[$__rate_interval])))",
-          "format": "time_series",
-          "legendFormat": "__auto",
+          "expr": "(avg by(instance) (node_load15{instance=~\"$instance\"})) * ($Operation== bool 1) + (min by(instance) (node_load15{instance=~\"$instance\"})) * ($Operation== bool 2) + (max by(instance) (node_load15{instance=~\"$instance\"})) * ($Operation== bool 3)",
+          "hide": false,
+          "legendFormat": "{{instance}} - 15m",
           "range": true,
-          "refId": "A"
+          "refId": "C"
         }
       ],
-      "title": "Average CPU Utilization",
-      "type": "gauge"
-    },
-    {
-      "datasource": {
-        "default": false,
-        "type": "prometheus",
-        "uid": "${Datasource}"
-      },
-      "description": "Average Memory Utilization",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "fieldMinMax": true,
-          "mappings": [],
-          "thresholds": {
-            "mode": "percentage",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 5,
-        "x": 14,
-        "y": 1
-      },
-      "id": 2021,
-      "options": {
-        "minVizHeight": 75,
-        "minVizWidth": 75,
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "sizing": "auto"
-      },
-      "pluginVersion": "11.2.8+security-01",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${Datasource}"
-          },
-          "editorMode": "code",
-          "expr": "(1 - (avg(node_memory_MemAvailable_bytes{instance=~\"$instance\"}) / avg(node_memory_MemTotal_bytes{instance=~\"$instance\"}))) * 100",
-          "format": "time_series",
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Average Memory Utilization",
-      "type": "gauge"
-    },
-    {
-      "datasource": {
-        "default": false,
-        "type": "prometheus",
-        "uid": "${Datasource}"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "fieldMinMax": true,
-          "mappings": [],
-          "thresholds": {
-            "mode": "percentage",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 5,
-        "x": 19,
-        "y": 1
-      },
-      "id": 2019,
-      "options": {
-        "minVizHeight": 75,
-        "minVizWidth": 75,
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "sizing": "auto"
-      },
-      "pluginVersion": "11.2.8+security-01",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${Datasource}"
-          },
-          "editorMode": "code",
-          "expr": "100 - (node_filesystem_avail_bytes{instance=\"$instance\",mountpoint=\"/\",fstype!=\"rootfs\"} * 100) / node_filesystem_size_bytes{instance=\"$instance\",mountpoint=\"/\",fstype!=\"rootfs\"}",
-          "format": "time_series",
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Filesystem Used",
-      "type": "gauge"
-    },
-    {
-      "datasource": {
-        "default": false,
-        "type": "prometheus",
-        "uid": "${Datasource}"
-      },
-      "description": "Time Node has been up",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "decimals": 0,
-          "fieldMinMax": true,
-          "mappings": [],
-          "thresholds": {
-            "mode": "percentage",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "s"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 2,
-        "w": 9,
-        "x": 0,
-        "y": 7
-      },
-      "id": 2018,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "text": {
-          "valueSize": 24
-        },
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "11.2.8+security-01",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${Datasource}"
-          },
-          "editorMode": "code",
-          "expr": "node_time_seconds{instance=\"$instance\"} - node_boot_time_seconds{instance=\"$instance\"}",
-          "format": "time_series",
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Uptime",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${Datasource}"
-      },
-      "description": "CPU Utilization",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 40,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 2,
-          "mappings": [],
-          "max": 100,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 9
-      },
-      "id": 2,
-      "options": {
-        "legend": {
-          "calcs": [
-            "max",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${Datasource}"
-          },
-          "editorMode": "code",
-          "expr": "(100 * (1 - avg by (hostname, cpu) (rate(node_cpu_seconds_total{mode='idle', instance=~\"$instance\", cpu=~\"$cpu\"}[5m]))))",
-          "legendFormat": "CPU {{cpu}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "CPU Utilization",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${Datasource}"
-      },
-      "description": "CPU Clock Speed",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 40,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "MHz"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 9
-      },
-      "id": 2012,
-      "options": {
-        "legend": {
-          "calcs": [
-            "min",
-            "max",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${Datasource}"
-          },
-          "editorMode": "code",
-          "expr": "node_cpu_scaling_frequency_hertz{instance=~\"$instance\", cpu=~\"$cpu\"} / 1000000",
-          "legendFormat": "CPU {{cpu}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "CPU Clock",
+      "title": "Load",
       "type": "timeseries"
     },
     {
@@ -635,7 +176,7 @@
         "type": "prometheus",
         "uid": "${Datasource}"
       },
-      "description": "Memory Utilization",
+      "description": "Filesystem usage by node",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -685,8 +226,12 @@
                 "value": null
               },
               {
+                "color": "yellow",
+                "value": 75
+              },
+              {
                 "color": "red",
-                "value": 80
+                "value": 90
               }
             ]
           },
@@ -697,214 +242,10 @@
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 0,
-        "y": 17
-      },
-      "id": 17,
-      "options": {
-        "legend": {
-          "calcs": [
-            "min",
-            "max",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "right",
-          "showLegend": false
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${Datasource}"
-          },
-          "editorMode": "code",
-          "expr": "(100 * (1 - node_memory_memavailable_bytes{instance=~\"$instance\"} / node_memory_memtotal_bytes{instance=~\"$instance\"}))",
-          "interval": "",
-          "legendFormat": "{{instance}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Memory Utilization",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "default": false,
-        "type": "prometheus",
-        "uid": "${Datasource}"
-      },
-      "description": "Available memory",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 40,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "decbytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
         "x": 12,
-        "y": 17
+        "y": 1
       },
-      "id": 20,
-      "options": {
-        "legend": {
-          "calcs": [
-            "min",
-            "max",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "right",
-          "showLegend": false
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${Datasource}"
-          },
-          "editorMode": "code",
-          "expr": "node_memory_memavailable_bytes{instance=~\"$instance\"}",
-          "legendFormat": "{{instance}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Memory Available",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${Datasource}"
-      },
-      "description": "Filesystem size",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 40,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "decbytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 25
-      },
-      "id": 35,
+      "id": 106,
       "options": {
         "legend": {
           "calcs": [
@@ -923,17 +264,18 @@
       "targets": [
         {
           "datasource": {
+            "default": false,
             "type": "prometheus",
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "node_filesystem_size_bytes{instance=\"${instance}\",device!~\"rootfs\"} - node_filesystem_avail_bytes{instance=\"${instance}\",device!~\"rootfs\"}",
-          "legendFormat": "{{mountpoint}}",
+          "expr": "(avg by(instance) (100 - ((node_filesystem_avail_bytes{mountpoint=\"/\",fstype!=\"rootfs\"} * 100) / node_filesystem_size_bytes{mountpoint=\"/\",fstype!=\"rootfs\"}))) * ($Operation== bool 1) + (min by(instance) (100 - ((node_filesystem_avail_bytes{mountpoint=\"/\",fstype!=\"rootfs\"} * 100) / node_filesystem_size_bytes{mountpoint=\"/\",fstype!=\"rootfs\"}))) * ($Operation== bool 2) + (max by(instance) (100 - ((node_filesystem_avail_bytes{mountpoint=\"/\",fstype!=\"rootfs\"} * 100) / node_filesystem_size_bytes{mountpoint=\"/\",fstype!=\"rootfs\"}))) * ($Operation== bool 3)",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Filesystem Space",
+      "title": "Filesystem Usage",
       "type": "timeseries"
     },
     {
@@ -942,7 +284,7 @@
         "type": "prometheus",
         "uid": "${Datasource}"
       },
-      "description": "RX/TX rate of VM's Ethernet Interface",
+      "description": "Selected Operation on CPU utilization across all nodes",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -952,7 +294,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "bytes out (-) / in (+)",
+            "axisLabel": "",
             "axisPlacement": "left",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
@@ -967,6 +309,305 @@
             "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 9
+      },
+      "id": 101,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "default": false,
+            "type": "prometheus",
+            "uid": "${Datasource}"
+          },
+          "editorMode": "code",
+          "expr": "(avg by(instance) (100 * (1 - avg by(instance, cpu) (rate(node_cpu_seconds_total{mode=\"idle\"}[$__rate_interval])))))  *  ($Operation== bool 1)  + (min by(instance) (100 * (1 - avg by(instance, cpu) (rate(node_cpu_seconds_total{mode=\"idle\"}[$__rate_interval])))))  *  ($Operation== bool 2)  + (max by(instance) (100 * (1 - avg by(instance, cpu) (rate(node_cpu_seconds_total{mode=\"idle\"}[$__rate_interval])))))  *  ($Operation== bool 3)",
+          "legendFormat": "{{instance}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "CPU Utilization",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "default": false,
+        "type": "prometheus",
+        "uid": "${Datasource}"
+      },
+      "description": "Selected Operation of VM CPU Clock",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "left",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 40,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "MHz"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 9
+      },
+      "id": 22,
+      "options": {
+        "legend": {
+          "calcs": [
+            "min",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "default": false,
+            "type": "prometheus",
+            "uid": "${Datasource}"
+          },
+          "editorMode": "code",
+          "expr": "(avg by(instance) (node_cpu_scaling_frequency_hertz)/ 1000000)  *  ($Operation== bool 1)  + (min by(instance) (node_cpu_scaling_frequency_hertz)/ 1000000)  *  ($Operation== bool 2)  + (max by(instance) (node_cpu_scaling_frequency_hertz)/ 1000000)  *  ($Operation== bool 3)",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "CPU Clock",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "default": false,
+        "type": "prometheus",
+        "uid": "${Datasource}"
+      },
+      "description": "Selected Operation on Memory utilization across all nodes",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "left",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 40,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 17
+      },
+      "id": 102,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "default": false,
+            "type": "prometheus",
+            "uid": "${Datasource}"
+          },
+          "editorMode": "code",
+          "expr": "(avg by(instance) (100 * (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)))) * ($Operation== bool 1) + (min by(instance) (100 * (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)))) * ($Operation== bool 2) + (max by(instance) (100 * (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)))) * ($Operation== bool 3)",
+          "legendFormat": "{{instance}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Memory Utilization",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "default": false,
+        "type": "prometheus",
+        "uid": "${Datasource}"
+      },
+      "description": "RX/TX rate of VM's Ethernet Interface by Node",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "bytes out (-) / in (+)",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 40,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -1012,14 +653,14 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 25
+        "y": 17
       },
-      "id": 25,
+      "id": 223,
       "options": {
         "legend": {
           "calcs": [
             "max",
-            "last"
+            "mean"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -1033,11 +674,12 @@
       "targets": [
         {
           "datasource": {
+            "default": false,
             "type": "prometheus",
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(rate(node_network_receive_bytes_total{device='eth0', instance=~\"$instance\"}[$__rate_interval]))",
+          "expr": "(sum by(instance) (rate(node_network_receive_bytes_total{device='eth0'}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (rate(node_network_receive_bytes_total{device='eth0'}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (rate(node_network_receive_bytes_total{device='eth0'}[$__rate_interval]))) * ($Operation== bool 3)",
           "legendFormat": "{{instance}} - receive",
           "range": true,
           "refId": "A"
@@ -1048,7 +690,7 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(rate(node_network_transmit_bytes_total{device='eth0', instance=~\"$instance\"}[$__rate_interval]))",
+          "expr": "(sum by(instance) (rate(node_network_transmit_bytes_total{device='eth0'}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (rate(node_network_transmit_bytes_total{device='eth0'}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (rate(node_network_transmit_bytes_total{device='eth0'}[$__rate_interval]))) * ($Operation== bool 3)",
           "hide": false,
           "instant": false,
           "legendFormat": "{{instance}} - transmit",
@@ -1061,10 +703,11 @@
     },
     {
       "datasource": {
+        "default": false,
         "type": "prometheus",
         "uid": "${Datasource}"
       },
-      "description": "Disk I/O Utilization ",
+      "description": "Selected Operation of VM Available Memory",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1075,7 +718,7 @@
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
-            "axisPlacement": "auto",
+            "axisPlacement": "left",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
@@ -1088,7 +731,7 @@
             },
             "insertNulls": false,
             "lineInterpolation": "linear",
-            "lineWidth": 1,
+            "lineWidth": 2,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -1110,14 +753,10 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
-          "unit": "percentunit"
+          "unit": "deckbytes"
         },
         "overrides": []
       },
@@ -1125,14 +764,14 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 33
+        "y": 25
       },
-      "id": 34,
+      "id": 26,
       "options": {
         "legend": {
           "calcs": [
-            "max",
-            "mean"
+            "min",
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -1146,17 +785,18 @@
       "targets": [
         {
           "datasource": {
+            "default": false,
             "type": "prometheus",
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "irate(node_disk_io_time_seconds_total{instance=\"${instance}\",device=~\"$diskdevices\"} [$__rate_interval])",
-          "legendFormat": "{{device}}",
+          "expr": "(avg by(instance) (node_memory_memavailable_bytes))  *  ($Operation== bool 1)  + (min by(instance) (node_memory_memavailable_bytes))  *  ($Operation== bool 2)  + (max by(instance) (node_memory_memavailable_bytes))  *  ($Operation== bool 3) ",
+          "legendFormat": "__auto",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Disk I/O Utilization",
+      "title": "Available Memory",
       "type": "timeseries"
     },
     {
@@ -1165,7 +805,7 @@
         "type": "prometheus",
         "uid": "${Datasource}"
       },
-      "description": "Disk Read/Write Throughput",
+      "description": "Disk Throughput(read & write) by node",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1211,10 +851,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
@@ -1239,9 +875,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 33
+        "y": 25
       },
-      "id": 28,
+      "id": 105,
       "options": {
         "legend": {
           "calcs": [
@@ -1260,12 +896,13 @@
       "targets": [
         {
           "datasource": {
+            "default": false,
             "type": "prometheus",
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "irate(node_disk_read_bytes_total{instance=\"$instance\",device=~\"$diskdevices\"}[$__rate_interval])",
-          "legendFormat": "{{device}} -read",
+          "expr": "(avg by(instance) (irate(node_disk_read_bytes_total[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (irate(node_disk_read_bytes_total[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (irate(node_disk_read_bytes_total[$__rate_interval]))) * ($Operation== bool 3)",
+          "legendFormat": "{{instance}} - read",
           "range": true,
           "refId": "A"
         },
@@ -1275,8 +912,10 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "irate(node_disk_written_bytes_total{instance=\"$instance\",device=~\"$diskdevices\"}[$__rate_interval])",
-          "legendFormat": "{{device}} - write",
+          "expr": "(avg by(instance) (irate(node_disk_written_bytes_total[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (irate(node_disk_written_bytes_total[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (irate(node_disk_written_bytes_total[$__rate_interval]))) * ($Operation== bool 3)",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "{{instance}} - write",
           "range": true,
           "refId": "B"
         }
@@ -1290,7 +929,7 @@
         "type": "prometheus",
         "uid": "${Datasource}"
       },
-      "description": "Disk I/O Operations",
+      "description": "Disk I/O Utilization by node",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1300,7 +939,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "IO read (-) / write (+)",
+            "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
@@ -1336,37 +975,20 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
-          "unit": "iops"
+          "unit": "percentunit"
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/.*read.*/"
-            },
-            "properties": [
-              {
-                "id": "custom.transform",
-                "value": "negative-Y"
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 41
+        "y": 33
       },
-      "id": 27,
+      "id": 104,
       "options": {
         "legend": {
           "calcs": [
@@ -1385,28 +1007,18 @@
       "targets": [
         {
           "datasource": {
+            "default": false,
             "type": "prometheus",
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "irate(node_disk_reads_completed_total{instance=\"$instance\",device=~\"$diskdevices\"}[$__rate_interval])",
-          "legendFormat": "{{device}} - reads completed",
+          "expr": "(avg by(instance) (irate(node_disk_io_time_seconds_total[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (irate(node_disk_io_time_seconds_total[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (irate(node_disk_io_time_seconds_total[$__rate_interval]))) * ($Operation== bool 3)",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${Datasource}"
-          },
-          "editorMode": "code",
-          "expr": "irate(node_disk_writes_completed_total{instance=\"$instance\",device=~\"$diskdevices\"}[$__rate_interval])",
-          "legendFormat": "{{device}} - writes completed",
-          "range": true,
-          "refId": "B"
         }
       ],
-      "title": "Disk I/O Operations",
+      "title": "Disk I/O Utilization",
       "type": "timeseries"
     },
     {
@@ -1415,7 +1027,7 @@
         "type": "prometheus",
         "uid": "${Datasource}"
       },
-      "description": "NFS Read/Write Throughput",
+      "description": "NFS Read/Write Throughput by node",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1461,10 +1073,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
@@ -1489,9 +1097,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 41
+        "y": 33
       },
-      "id": 31,
+      "id": 107,
       "options": {
         "legend": {
           "calcs": [
@@ -1510,12 +1118,13 @@
       "targets": [
         {
           "datasource": {
+            "default": false,
             "type": "prometheus",
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "irate(node_mountstats_nfs_total_read_bytes_total{instance=\"$instance\"}[$__rate_interval])",
-          "legendFormat": "{{export}} - read",
+          "expr": "(sum by(instance) (irate(node_mountstats_nfs_total_read_bytes_total[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (irate(node_mountstats_nfs_total_read_bytes_total[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (irate(node_mountstats_nfs_total_read_bytes_total[$__rate_interval]))) * ($Operation== bool 3)",
+          "legendFormat": "{{instance}} - read",
           "range": true,
           "refId": "A"
         },
@@ -1525,8 +1134,10 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "irate(node_mountstats_nfs_total_write_bytes_total{instance=\"$instance\"}[$__rate_interval])",
-          "legendFormat": "{{export}} - write",
+          "expr": "(sum by(instance) (irate(node_mountstats_nfs_total_write_bytes_total[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (irate(node_mountstats_nfs_total_write_bytes_total[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (irate(node_mountstats_nfs_total_write_bytes_total[$__rate_interval]))) * ($Operation== bool 3)",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "{{instance}} - write",
           "range": true,
           "refId": "B"
         }
@@ -1540,7 +1151,7 @@
         "type": "prometheus",
         "uid": "${Datasource}"
       },
-      "description": "NFS I/O Operations",
+      "description": "NFS I/O Operations by node",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1586,10 +1197,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
@@ -1614,9 +1221,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 49
+        "y": 41
       },
-      "id": 30,
+      "id": 108,
       "options": {
         "legend": {
           "calcs": [
@@ -1635,12 +1242,13 @@
       "targets": [
         {
           "datasource": {
+            "default": false,
             "type": "prometheus",
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "irate(node_mountstats_nfs_operations_requests_total{instance=\"$instance\", operation=~\"^READ$\"}[$__rate_interval])",
-          "legendFormat": "{{export}} - {{operation}}s completed",
+          "expr": "(avg by(instance) (irate(node_mountstats_nfs_operations_requests_total{operation=~\"^READ$\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (irate(node_mountstats_nfs_operations_requests_total{operation=~\"^READ$\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (irate(node_mountstats_nfs_operations_requests_total{operation=~\"^READ$\"}[$__rate_interval]))) * ($Operation== bool 3)",
+          "legendFormat": "{{instance}} - read",
           "range": true,
           "refId": "A"
         },
@@ -1650,10 +1258,10 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "irate(node_mountstats_nfs_operations_requests_total{instance=\"$instance\", operation=~\"^WRITE$\"}[$__rate_interval])",
+          "expr": "(avg by(instance) (irate(node_mountstats_nfs_operations_requests_total{operation=~\"^WRITE$\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (irate(node_mountstats_nfs_operations_requests_total{operation=~\"^WRITE$\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (irate(node_mountstats_nfs_operations_requests_total{operation=~\"^WRITE$\"}[$__rate_interval]))) * ($Operation== bool 3)",
           "hide": false,
           "instant": false,
-          "legendFormat": "{{export}} - {{operation}}s completed",
+          "legendFormat": "{{instance}} - write",
           "range": true,
           "refId": "B"
         }
@@ -1667,9 +1275,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 57
+        "y": 49
       },
-      "id": 2000,
+      "id": 4,
       "panels": [],
       "title": "GPU Device Metrics",
       "type": "row"
@@ -1680,399 +1288,7 @@
         "type": "prometheus",
         "uid": "${Datasource}"
       },
-      "description": "Node Spec",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 9,
-        "x": 0,
-        "y": 58
-      },
-      "id": 2020,
-      "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true,
-        "sortBy": [
-          {
-            "desc": true,
-            "displayName": "node_uname_info"
-          }
-        ]
-      },
-      "pluginVersion": "11.2.8+security-01",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${Datasource}"
-          },
-          "editorMode": "code",
-          "expr": "dcgm_fi_dev_gpu_util{instance=\"$instance\", gpu=\"0\"}",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "transformations": [
-        {
-          "id": "labelsToFields",
-          "options": {
-            "keepLabels": [
-              "modelname",
-              "dcgm_fi_driver_version",
-              "pci_bus_id"
-            ],
-            "mode": "rows"
-          }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {},
-            "includeByName": {},
-            "indexByName": {},
-            "renameByName": {
-              "label": "Specs",
-              "value": "Values"
-            }
-          }
-        }
-      ],
-      "type": "table"
-    },
-    {
-      "datasource": {
-        "default": false,
-        "type": "prometheus",
-        "uid": "${Datasource}"
-      },
-      "description": "Average Power Usage",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "fieldMinMax": true,
-          "mappings": [],
-          "max": 400,
-          "thresholds": {
-            "mode": "percentage",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "watt"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 5,
-        "x": 9,
-        "y": 58
-      },
-      "id": 6,
-      "options": {
-        "minVizHeight": 75,
-        "minVizWidth": 75,
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "sizing": "auto"
-      },
-      "pluginVersion": "11.2.8+security-01",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${Datasource}"
-          },
-          "editorMode": "code",
-          "expr": "avg(dcgm_fi_dev_power_usage{instance=~\"$instance\"})",
-          "legendFormat": "CPU {{cpu}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Average Power Usage",
-      "type": "gauge"
-    },
-    {
-      "datasource": {
-        "default": false,
-        "type": "prometheus",
-        "uid": "${Datasource}"
-      },
-      "description": "Average GPU Utilization ",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "fieldMinMax": true,
-          "mappings": [],
-          "thresholds": {
-            "mode": "percentage",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 5,
-        "x": 14,
-        "y": 58
-      },
-      "id": 2013,
-      "options": {
-        "minVizHeight": 75,
-        "minVizWidth": 75,
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "sizing": "auto"
-      },
-      "pluginVersion": "11.2.8+security-01",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${Datasource}"
-          },
-          "editorMode": "code",
-          "expr": "avg(dcgm_fi_dev_gpu_util{instance=~\"$instance\"})",
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Average GPU Utilization",
-      "type": "gauge"
-    },
-    {
-      "datasource": {
-        "default": false,
-        "type": "prometheus",
-        "uid": "${Datasource}"
-      },
-      "description": "Average GPU Temperature",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "fieldMinMax": true,
-          "mappings": [],
-          "thresholds": {
-            "mode": "percentage",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "celsius"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 5,
-        "x": 19,
-        "y": 58
-      },
-      "id": 2014,
-      "options": {
-        "minVizHeight": 75,
-        "minVizWidth": 75,
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "sizing": "auto"
-      },
-      "pluginVersion": "11.2.8+security-01",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${Datasource}"
-          },
-          "editorMode": "code",
-          "expr": "avg(dcgm_fi_dev_gpu_temp{instance=~\"$instance\"})",
-          "legendFormat": "GPU {{gpu}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Average GPU Temperature",
-      "type": "gauge"
-    },
-    {
-      "datasource": {
-        "default": false,
-        "type": "prometheus",
-        "uid": "${Datasource}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "#299c46",
-                "value": null
-              },
-              {
-                "color": "rgba(237, 129, 40, 0.89)",
-                "value": 1
-              },
-              {
-                "color": "#d44a3a",
-                "value": 2
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 2,
-        "w": 9,
-        "x": 0,
-        "y": 64
-      },
-      "id": 2031,
-      "maxDataPoints": 100,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "vertical",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "text": {
-          "titleSize": 14,
-          "valueSize": 14
-        },
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "11.2.8+security-01",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${Datasource}"
-          },
-          "editorMode": "code",
-          "expr": "max by (gpu) (dcgm_fi_dev_xid_errors{instance=\"$instance\"})",
-          "legendFormat": "{{gpu}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "GPU XID Errors",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${Datasource}"
-      },
-      "description": "GPU utilization (in %)",
+      "description": "Selected Operation on VM GPU device utilization",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2083,7 +1299,7 @@
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
-            "axisPlacement": "auto",
+            "axisPlacement": "left",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
@@ -2096,7 +1312,7 @@
             },
             "insertNulls": false,
             "lineInterpolation": "linear",
-            "lineWidth": 1,
+            "lineWidth": 2,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -2111,7 +1327,6 @@
               "mode": "off"
             }
           },
-          "links": [],
           "mappings": [],
           "max": 100,
           "min": 0,
@@ -2121,10 +1336,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
@@ -2136,30 +1347,34 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 66
+        "y": 50
       },
-      "id": 100,
+      "id": 6,
       "options": {
         "legend": {
           "calcs": [
-            "mean",
-            "max",
-            "min"
+            "last"
           ],
           "displayMode": "table",
           "placement": "bottom",
-          "showLegend": true,
-          "width": 250
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "multi",
+          "mode": "single",
           "sort": "none"
         }
       },
       "targets": [
         {
-          "expr": "dcgm_fi_dev_gpu_util{instance=~\"$instance\", gpu=~\"$gpu\"}",
-          "legendFormat": "GPU {{gpu}}",
+          "datasource": {
+            "default": false,
+            "type": "prometheus",
+            "uid": "${Datasource}"
+          },
+          "editorMode": "code",
+          "expr": "(avg by(instance) (DCGM_FI_DEV_GPU_UTIL))  *  ($Operation== bool 1)  + (min by(instance) (DCGM_FI_DEV_GPU_UTIL))  *  ($Operation== bool 2)  + (max by(instance) (DCGM_FI_DEV_GPU_UTIL))  *  ($Operation== bool 3) ",
+          "legendFormat": "__auto",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -2168,10 +1383,11 @@
     },
     {
       "datasource": {
+        "default": false,
         "type": "prometheus",
         "uid": "${Datasource}"
       },
-      "description": "Memory utilization (in %)",
+      "description": "Average of VM GPU device Memory utilization",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2182,7 +1398,7 @@
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
-            "axisPlacement": "auto",
+            "axisPlacement": "left",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
@@ -2195,7 +1411,7 @@
             },
             "insertNulls": false,
             "lineInterpolation": "linear",
-            "lineWidth": 1,
+            "lineWidth": 2,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -2210,7 +1426,6 @@
               "mode": "off"
             }
           },
-          "links": [],
           "mappings": [],
           "max": 100,
           "min": 0,
@@ -2220,10 +1435,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
@@ -2235,30 +1446,34 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 66
+        "y": 50
       },
-      "id": 101,
+      "id": 7,
       "options": {
         "legend": {
           "calcs": [
-            "mean",
-            "max",
-            "min"
+            "last"
           ],
           "displayMode": "table",
           "placement": "bottom",
-          "showLegend": true,
-          "width": 250
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "multi",
+          "mode": "single",
           "sort": "none"
         }
       },
       "targets": [
         {
-          "expr": "dcgm_fi_dev_mem_copy_util{instance=~\"$instance\", gpu=~\"$gpu\"}",
-          "legendFormat": "GPU {{gpu}}",
+          "datasource": {
+            "default": false,
+            "type": "prometheus",
+            "uid": "${Datasource}"
+          },
+          "editorMode": "code",
+          "expr": "(avg by(instance) (DCGM_FI_DEV_MEM_COPY_UTIL))  *  ($Operation== bool 1)  + (min by(instance) (DCGM_FI_DEV_MEM_COPY_UTIL))  *  ($Operation== bool 2)  + (max by(instance) (DCGM_FI_DEV_MEM_COPY_UTIL))  *  ($Operation== bool 3) ",
+          "legendFormat": "{{instance}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -2267,10 +1482,11 @@
     },
     {
       "datasource": {
+        "default": false,
         "type": "prometheus",
         "uid": "${Datasource}"
       },
-      "description": "SM clock frequency (in MHz)",
+      "description": "Selected Operation on VM GPU device SM Clock",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2281,7 +1497,7 @@
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
-            "axisPlacement": "auto",
+            "axisPlacement": "left",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
@@ -2294,7 +1510,7 @@
             },
             "insertNulls": false,
             "lineInterpolation": "linear",
-            "lineWidth": 1,
+            "lineWidth": 2,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -2309,18 +1525,15 @@
               "mode": "off"
             }
           },
-          "links": [],
           "mappings": [],
+          "max": 1500,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
@@ -2332,41 +1545,48 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 74
+        "y": 58
       },
-      "id": 102,
+      "id": 8,
       "options": {
         "legend": {
           "calcs": [
-            "max",
-            "min"
+            "min",
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
-          "showLegend": true,
-          "width": 250
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "multi",
+          "mode": "single",
           "sort": "none"
         }
       },
       "targets": [
         {
-          "expr": "dcgm_fi_dev_sm_clock{instance=~\"$instance\", gpu=~\"$gpu\"}",
-          "legendFormat": "GPU {{gpu}}",
+          "datasource": {
+            "default": false,
+            "type": "prometheus",
+            "uid": "${Datasource}"
+          },
+          "editorMode": "code",
+          "expr": "(avg by(instance) (DCGM_FI_DEV_SM_CLOCK))  *  ($Operation== bool 1)  + (min by(instance) (DCGM_FI_DEV_SM_CLOCK))  *  ($Operation== bool 2)  + (max by(instance) (DCGM_FI_DEV_SM_CLOCK))  *  ($Operation== bool 3) ",
+          "legendFormat": "{{instance}}",
+          "range": true,
           "refId": "A"
         }
       ],
-      "title": "SM Clock",
+      "title": "SM Clock ",
       "type": "timeseries"
     },
     {
       "datasource": {
+        "default": false,
         "type": "prometheus",
         "uid": "${Datasource}"
       },
-      "description": "Memory clock frequency (in MHz)",
+      "description": "Selected Operation of VM GPU device Memory Clock",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2377,7 +1597,7 @@
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
-            "axisPlacement": "auto",
+            "axisPlacement": "left",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
@@ -2390,7 +1610,7 @@
             },
             "insertNulls": false,
             "lineInterpolation": "linear",
-            "lineWidth": 1,
+            "lineWidth": 2,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -2405,18 +1625,14 @@
               "mode": "off"
             }
           },
-          "links": [],
           "mappings": [],
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
@@ -2428,29 +1644,35 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 74
+        "y": 58
       },
-      "id": 103,
+      "id": 9,
       "options": {
         "legend": {
           "calcs": [
-            "max",
-            "min"
+            "min",
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
-          "showLegend": true,
-          "width": 250
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "multi",
+          "mode": "single",
           "sort": "none"
         }
       },
       "targets": [
         {
-          "expr": "dcgm_fi_dev_mem_clock{instance=~\"$instance\", gpu=~\"$gpu\"}",
-          "legendFormat": "GPU {{gpu}}",
+          "datasource": {
+            "default": false,
+            "type": "prometheus",
+            "uid": "${Datasource}"
+          },
+          "editorMode": "code",
+          "expr": "(avg by(instance) (DCGM_FI_DEV_MEM_CLOCK))  *  ($Operation== bool 1)  + (min by(instance) (DCGM_FI_DEV_MEM_CLOCK))  *  ($Operation== bool 2)  + (max by(instance) (DCGM_FI_DEV_MEM_CLOCK))  *  ($Operation== bool 3) ",
+          "legendFormat": "{{instance}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -2459,10 +1681,11 @@
     },
     {
       "datasource": {
+        "default": false,
         "type": "prometheus",
         "uid": "${Datasource}"
       },
-      "description": "GPU temperature (in C)",
+      "description": "Selected Operation of VM GPU device Temperature",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2473,7 +1696,7 @@
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
-            "axisPlacement": "auto",
+            "axisPlacement": "left",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
@@ -2486,7 +1709,7 @@
             },
             "insertNulls": false,
             "lineInterpolation": "linear",
-            "lineWidth": 1,
+            "lineWidth": 2,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -2501,7 +1724,6 @@
               "mode": "off"
             }
           },
-          "links": [],
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -2509,10 +1731,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
@@ -2524,30 +1742,35 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 82
+        "y": 66
       },
-      "id": 104,
+      "id": 10,
       "options": {
         "legend": {
           "calcs": [
-            "mean",
-            "max",
-            "min"
+            "min",
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
-          "showLegend": true,
-          "width": 250
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "multi",
+          "mode": "single",
           "sort": "none"
         }
       },
       "targets": [
         {
-          "expr": "dcgm_fi_dev_gpu_temp{instance=~\"$instance\", gpu=~\"$gpu\"}",
-          "legendFormat": "GPU {{gpu}}",
+          "datasource": {
+            "default": false,
+            "type": "prometheus",
+            "uid": "${Datasource}"
+          },
+          "editorMode": "code",
+          "expr": "(avg by(instance) (DCGM_FI_DEV_GPU_TEMP))  *  ($Operation== bool 1)  + (min by(instance) (DCGM_FI_DEV_GPU_TEMP))  *  ($Operation== bool 2)  + (max by(instance) (DCGM_FI_DEV_GPU_TEMP))  *  ($Operation== bool 3) ",
+          "legendFormat": "__auto",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -2556,10 +1779,11 @@
     },
     {
       "datasource": {
+        "default": false,
         "type": "prometheus",
         "uid": "${Datasource}"
       },
-      "description": "Memory temperature (in C)",
+      "description": "Selected Operation of VM GPU device Memory Temperature",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2570,7 +1794,7 @@
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
-            "axisPlacement": "auto",
+            "axisPlacement": "left",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
@@ -2583,7 +1807,7 @@
             },
             "insertNulls": false,
             "lineInterpolation": "linear",
-            "lineWidth": 1,
+            "lineWidth": 2,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -2598,7 +1822,6 @@
               "mode": "off"
             }
           },
-          "links": [],
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -2606,10 +1829,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
@@ -2621,30 +1840,35 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 82
+        "y": 66
       },
-      "id": 105,
+      "id": 11,
       "options": {
         "legend": {
           "calcs": [
-            "mean",
-            "max",
-            "min"
+            "min",
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
-          "showLegend": true,
-          "width": 250
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "multi",
+          "mode": "single",
           "sort": "none"
         }
       },
       "targets": [
         {
-          "expr": "dcgm_fi_dev_memory_temp{instance=~\"$instance\", gpu=~\"$gpu\"}",
-          "legendFormat": "GPU {{gpu}}",
+          "datasource": {
+            "default": false,
+            "type": "prometheus",
+            "uid": "${Datasource}"
+          },
+          "editorMode": "code",
+          "expr": "(avg by(instance) (DCGM_FI_DEV_MEMORY_TEMP))  *  ($Operation== bool 1)  + (min by(instance) (DCGM_FI_DEV_MEMORY_TEMP))  *  ($Operation== bool 2)  + (max by(instance) (DCGM_FI_DEV_MEMORY_TEMP))  *  ($Operation== bool 3) ",
+          "legendFormat": "{{instance}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -2653,10 +1877,11 @@
     },
     {
       "datasource": {
+        "default": false,
         "type": "prometheus",
         "uid": "${Datasource}"
       },
-      "description": "Power usage (in W)",
+      "description": "Selected Operation of VM GPU Power",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2667,7 +1892,7 @@
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
-            "axisPlacement": "auto",
+            "axisPlacement": "left",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
@@ -2680,7 +1905,7 @@
             },
             "insertNulls": false,
             "lineInterpolation": "linear",
-            "lineWidth": 1,
+            "lineWidth": 2,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -2695,7 +1920,6 @@
               "mode": "off"
             }
           },
-          "links": [],
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -2703,10 +1927,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
@@ -2718,30 +1938,35 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 90
+        "y": 74
       },
-      "id": 106,
+      "id": 12,
       "options": {
         "legend": {
           "calcs": [
-            "mean",
-            "max",
-            "min"
+            "min",
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
-          "showLegend": true,
-          "width": 250
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "multi",
+          "mode": "single",
           "sort": "none"
         }
       },
       "targets": [
         {
-          "expr": "dcgm_fi_dev_power_usage{instance=~\"$instance\", gpu=~\"$gpu\"}",
-          "legendFormat": "GPU {{gpu}}",
+          "datasource": {
+            "default": false,
+            "type": "prometheus",
+            "uid": "${Datasource}"
+          },
+          "editorMode": "code",
+          "expr": "(avg by(instance) (DCGM_FI_DEV_POWER_USAGE))  *  ($Operation== bool 1)  + (min by(instance) (DCGM_FI_DEV_POWER_USAGE))  *  ($Operation== bool 2)  + (max by(instance) (DCGM_FI_DEV_POWER_USAGE))  *  ($Operation== bool 3) ",
+          "legendFormat": "{{instance}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -2750,6 +1975,7 @@
     },
     {
       "datasource": {
+        "default": false,
         "type": "prometheus",
         "uid": "${Datasource}"
       },
@@ -2764,7 +1990,7 @@
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
-            "axisPlacement": "auto",
+            "axisPlacement": "left",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
@@ -2777,7 +2003,7 @@
             },
             "insertNulls": false,
             "lineInterpolation": "linear",
-            "lineWidth": 1,
+            "lineWidth": 2,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -2792,7 +2018,6 @@
               "mode": "off"
             }
           },
-          "links": [],
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -2800,10 +2025,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
@@ -2815,29 +2036,35 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 90
+        "y": 74
       },
-      "id": 107,
+      "id": 215,
       "options": {
         "legend": {
           "calcs": [
-            "max",
-            "min"
+            "min",
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
-          "showLegend": true,
-          "width": 250
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "multi",
+          "mode": "single",
           "sort": "none"
         }
       },
       "targets": [
         {
-          "expr": "dcgm_fi_dev_total_energy_consumption{instance=~\"$instance\", gpu=~\"$gpu\"} / 10^3",
-          "legendFormat": "GPU {{gpu}}",
+          "datasource": {
+            "default": false,
+            "type": "prometheus",
+            "uid": "${Datasource}"
+          },
+          "editorMode": "code",
+          "expr": "(avg by(instance) (dcgm_fi_dev_total_energy_consumption)/ 10^3)  *  ($Operation== bool 1)  + (min by(hostname) (dcgm_fi_dev_total_energy_consumption)/ 10^3)  *  ($Operation== bool 2)  + (max by(instance) (dcgm_fi_dev_total_energy_consumption)/ 10^3)  *  ($Operation== bool 3) ",
+          "legendFormat": "{{instance}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -2923,9 +2150,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 98
+        "y": 82
       },
-      "id": 2064,
+      "id": 224,
       "options": {
         "cellHeight": "sm",
         "footer": {
@@ -2938,12 +2165,7 @@
           "show": false
         },
         "showHeader": true,
-        "sortBy": [
-          {
-            "desc": false,
-            "displayName": "GPU"
-          }
-        ]
+        "sortBy": []
       },
       "pluginVersion": "11.2.8+security-01",
       "targets": [
@@ -2954,14 +2176,14 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "DCGM_FI_DEV_XID_ERRORS{instance=\"$instance\"}",
+          "expr": "DCGM_FI_DEV_XID_ERRORS",
           "format": "table",
-          "legendFormat": "__auto",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Last GPU XID Code",
+      "title": "Last XID Code Present",
       "transformations": [
         {
           "id": "filterFieldsByName",
@@ -3006,7 +2228,8 @@
                 "aggregations": []
               },
               "instance": {
-                "aggregations": []
+                "aggregations": [],
+                "operation": "groupby"
               },
               "time_stamp": {
                 "aggregations": [
@@ -3060,7 +2283,7 @@
         "type": "prometheus",
         "uid": "${Datasource}"
       },
-      "description": "Last GPU Throttle Code",
+      "description": "Last Throttle Code",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -3149,9 +2372,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 98
+        "y": 82
       },
-      "id": 2065,
+      "id": 225,
       "options": {
         "cellHeight": "sm",
         "footer": {
@@ -3164,12 +2387,7 @@
           "show": false
         },
         "showHeader": true,
-        "sortBy": [
-          {
-            "desc": false,
-            "displayName": "GPU"
-          }
-        ]
+        "sortBy": []
       },
       "pluginVersion": "11.2.8+security-01",
       "targets": [
@@ -3181,7 +2399,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "DCGM_FI_DEV_CLOCKS_EVENT_REASONS{instance=\"$instance\"}",
+          "expr": "DCGM_FI_DEV_CLOCKS_EVENT_REASONS",
           "format": "table",
           "instant": false,
           "legendFormat": "{{instance}}",
@@ -3189,7 +2407,7 @@
           "refId": "A"
         }
       ],
-      "title": "Last GPU Throttle Code",
+      "title": "Last Throttle Code",
       "transformations": [
         {
           "id": "filterFieldsByName",
@@ -3197,8 +2415,9 @@
             "include": {
               "names": [
                 "device",
-                "gpu",
-                "Value"
+                "instance",
+                "Value",
+                "gpu"
               ]
             }
           }
@@ -3230,7 +2449,8 @@
                 "operation": "groupby"
               },
               "instance": {
-                "aggregations": []
+                "aggregations": [],
+                "operation": "groupby"
               },
               "time_stamp": {
                 "aggregations": [
@@ -3278,17 +2498,12 @@
       "type": "table"
     },
     {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
       "datasource": {
         "default": false,
         "type": "prometheus",
         "uid": "${Datasource}"
       },
-      "decimals": 0,
-      "description": "Total number of single-bit persistent ECC errors",
+      "description": "Total number of single-bit persistent ECC errors by node",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -3327,7 +2542,7 @@
               "mode": "off"
             }
           },
-          "links": [],
+          "decimals": 0,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -3338,45 +2553,27 @@
               },
               {
                 "color": "red",
-                "value": 80
+                "value": 1
               }
             ]
-          }
+          },
+          "unit": "none"
         },
         "overrides": []
       },
-      "fill": 1,
-      "fillGradient": 0,
       "gridPos": {
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 106
+        "y": 90
       },
-      "hiddenSeries": false,
-      "id": 2050,
-      "legend": {
-        "alignAsTable": true,
-        "avg": false,
-        "current": true,
-        "hideEmpty": false,
-        "max": true,
-        "min": false,
-        "rightSide": true,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
+      "id": 208,
       "options": {
-        "alertThreshold": true,
         "legend": {
           "calcs": [
             "lastNotNull"
           ],
-          "displayMode": "list",
+          "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
         },
@@ -3385,407 +2582,30 @@
           "sort": "none"
         }
       },
-      "percentage": false,
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "daamw-mscycle"
-          },
-          "editorMode": "code",
-          "expr": "increase(dcgm_fi_dev_ecc_sbe_agg_total{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval])",
-          "legendFormat": "GPU {{gpu}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeRegions": [],
-      "title": "SBE Persistent ECC Errors",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "timeseries",
-      "xaxis": {
-        "mode": "time",
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:3014",
-          "decimals": 0,
-          "format": "short",
-          "label": "",
-          "logBase": 1,
-          "min": "0",
-          "show": true
-        },
-        {
-          "$$hashKey": "object:3015",
-          "decimals": 0,
-          "format": "short",
-          "logBase": 1,
-          "min": "0",
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": {
-        "default": false,
-        "type": "prometheus",
-        "uid": "${Datasource}"
-      },
-      "decimals": 0,
-      "description": "Total number of double-bit persistent ECC errors",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "Errors",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "links": [],
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 106
-      },
-      "hiddenSeries": false,
-      "id": 2051,
-      "legend": {
-        "alignAsTable": true,
-        "avg": false,
-        "current": true,
-        "hideEmpty": false,
-        "max": true,
-        "min": false,
-        "rightSide": true,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true,
-        "legend": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "percentage": false,
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "daamw-mscycle"
-          },
-          "editorMode": "code",
-          "expr": "increase(dcgm_fi_dev_ecc_dbe_agg_total{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval])",
-          "legendFormat": "GPU {{gpu}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeRegions": [],
-      "title": "DBE Persistent ECC Errors",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "timeseries",
-      "xaxis": {
-        "mode": "time",
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:3101",
-          "decimals": 0,
-          "format": "short",
-          "label": "",
-          "logBase": 1,
-          "min": "0",
-          "show": true
-        },
-        {
-          "$$hashKey": "object:3102",
-          "decimals": 0,
-          "format": "short",
-          "logBase": 1,
-          "min": "0",
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": {
-        "default": false,
-        "type": "prometheus",
-        "uid": "${Datasource}"
-      },
-      "decimals": 0,
-      "description": "Total number of single-bit volatile ECC errors",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "Errors",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 114
-      },
-      "hiddenSeries": false,
-      "id": 2054,
-      "legend": {
-        "alignAsTable": true,
-        "avg": false,
-        "current": true,
-        "hideEmpty": false,
-        "max": true,
-        "min": false,
-        "rightSide": true,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "alertThreshold": true,
-        "legend": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "percentage": false,
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "datasource": {
+            "default": false,
             "type": "prometheus",
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "increase(dcgm_fi_dev_ecc_sbe_vol_total{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval])",
-          "legendFormat": "GPU {{gpu}}",
+          "expr": "(avg by(instance) (increase(dcgm_fi_dev_ecc_sbe_agg_total[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (increase(dcgm_fi_dev_ecc_sbe_agg_total[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (increase(dcgm_fi_dev_ecc_sbe_agg_total[$__rate_interval]))) * ($Operation== bool 3)",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "thresholds": [],
-      "timeRegions": [],
-      "title": "SBE Volatile ECC Errors",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "timeseries",
-      "xaxis": {
-        "mode": "time",
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:773",
-          "decimals": 0,
-          "format": "short",
-          "label": "",
-          "logBase": 1,
-          "min": "0",
-          "show": true
-        },
-        {
-          "$$hashKey": "object:774",
-          "decimals": 0,
-          "format": "short",
-          "logBase": 1,
-          "min": "0",
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false
-      }
+      "title": "SBE Persistent ECC Errors",
+      "type": "timeseries"
     },
     {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
       "datasource": {
         "default": false,
         "type": "prometheus",
         "uid": "${Datasource}"
       },
-      "decimals": 0,
-      "description": "Total number of double-bit volatile ECC errors",
+      "description": "Total number of double-bit persistent ECC errors by node",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -3824,7 +2644,7 @@
               "mode": "off"
             }
           },
-          "links": [],
+          "decimals": 0,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -3835,45 +2655,27 @@
               },
               {
                 "color": "red",
-                "value": 80
+                "value": 1
               }
             ]
-          }
+          },
+          "unit": "none"
         },
         "overrides": []
       },
-      "fill": 1,
-      "fillGradient": 0,
       "gridPos": {
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 114
+        "y": 90
       },
-      "hiddenSeries": false,
-      "id": 2055,
-      "legend": {
-        "alignAsTable": true,
-        "avg": false,
-        "current": true,
-        "hideEmpty": false,
-        "max": true,
-        "min": false,
-        "rightSide": true,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
+      "id": 214,
       "options": {
-        "alertThreshold": true,
         "legend": {
           "calcs": [
             "lastNotNull"
           ],
-          "displayMode": "list",
+          "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
         },
@@ -3882,63 +2684,22 @@
           "sort": "none"
         }
       },
-      "percentage": false,
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
       "targets": [
         {
           "datasource": {
+            "default": false,
             "type": "prometheus",
-            "uid": "daamw-mscycle"
+            "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "increase(dcgm_fi_dev_ecc_dbe_vol_total{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval])",
-          "legendFormat": "GPU {{gpu}}",
+          "expr": "(avg by(instance) (increase(dcgm_fi_dev_ecc_dbe_agg_total[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (increase(dcgm_fi_dev_ecc_dbe_agg_total[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (increase(dcgm_fi_dev_ecc_dbe_agg_total[$__rate_interval]))) * ($Operation== bool 3)",
+          "legendFormat": "{{instance}} ",
           "range": true,
           "refId": "A"
         }
       ],
-      "thresholds": [],
-      "timeRegions": [],
-      "title": "DBE Volatile ECC Errors",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "timeseries",
-      "xaxis": {
-        "mode": "time",
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:2927",
-          "decimals": 0,
-          "format": "short",
-          "label": "",
-          "logBase": 1,
-          "min": "0",
-          "show": true
-        },
-        {
-          "$$hashKey": "object:2928",
-          "decimals": 0,
-          "format": "short",
-          "logBase": 1,
-          "min": "0",
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false
-      }
+      "title": "DBE Persistent ECC Errors",
+      "type": "timeseries"
     },
     {
       "datasource": {
@@ -3946,7 +2707,211 @@
         "type": "prometheus",
         "uid": "${Datasource}"
       },
-      "description": "Thermal Violation Elapsed Time",
+      "description": "Total number of double-bit volatile ECC errors by node",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Errors",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 98
+      },
+      "id": 211,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "default": false,
+            "type": "prometheus",
+            "uid": "${Datasource}"
+          },
+          "editorMode": "code",
+          "expr": "(avg by(instance) (increase(dcgm_fi_dev_ecc_dbe_vol_total[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (increase(dcgm_fi_dev_ecc_dbe_vol_total[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (increase(dcgm_fi_dev_ecc_dbe_vol_total[$__rate_interval]))) * ($Operation== bool 3)",
+          "legendFormat": "{{instance}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "DBE Volatile ECC Errors",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "default": false,
+        "type": "prometheus",
+        "uid": "${Datasource}"
+      },
+      "description": "Total number of single-bit volatile ECC errors by node",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Errors",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 98
+      },
+      "id": 210,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "default": false,
+            "type": "prometheus",
+            "uid": "${Datasource}"
+          },
+          "editorMode": "code",
+          "expr": "(avg by(instance) (increase(dcgm_fi_dev_ecc_sbe_vol_total[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (increase(dcgm_fi_dev_ecc_sbe_vol_total[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (increase(dcgm_fi_dev_ecc_sbe_vol_total[$__rate_interval]))) * ($Operation== bool 3)",
+          "legendFormat": "{{hostname}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "SBE Volatile ECC Errors",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "default": false,
+        "type": "prometheus",
+        "uid": "${Datasource}"
+      },
+      "description": "Thermal Violation Elapsed Time by node",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -3996,7 +2961,7 @@
               },
               {
                 "color": "red",
-                "value": 80
+                "value": 0.1
               }
             ]
           }
@@ -4007,34 +2972,33 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 122
+        "y": 106
       },
-      "id": 2052,
+      "id": 212,
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull"
           ],
-          "displayMode": "list",
+          "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
         },
         "tooltip": {
-          "mode": "multi",
+          "mode": "single",
           "sort": "none"
         }
       },
-      "pluginVersion": "9.4.7",
       "targets": [
         {
           "datasource": {
+            "default": false,
             "type": "prometheus",
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "exemplar": false,
-          "expr": "increase(dcgm_fi_dev_thermal_violation{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval]) / 1e9",
-          "legendFormat": "GPU {{gpu}}",
+          "expr": "(avg by(instance) (increase(dcgm_fi_dev_thermal_violation[$__rate_interval]) / 1e9)) * ($Operation== bool 1) + (min by(instance) (increase(dcgm_fi_dev_thermal_violation[$__rate_interval]) / 1e9)) * ($Operation== bool 2) + (max by(instance) (increase(dcgm_fi_dev_thermal_violation[$__rate_interval]) / 1e9)) * ($Operation== bool 3)",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
@@ -4048,7 +3012,7 @@
         "type": "prometheus",
         "uid": "${Datasource}"
       },
-      "description": "Power Violation Elapsed Time",
+      "description": "Power Violation Elapsed Time by node",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -4098,7 +3062,7 @@
               },
               {
                 "color": "red",
-                "value": 80
+                "value": 0.1
               }
             ]
           }
@@ -4109,34 +3073,33 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 122
+        "y": 106
       },
-      "id": 2053,
+      "id": 213,
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull"
           ],
-          "displayMode": "list",
+          "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
         },
         "tooltip": {
-          "mode": "multi",
+          "mode": "single",
           "sort": "none"
         }
       },
-      "pluginVersion": "9.4.7",
       "targets": [
         {
           "datasource": {
+            "default": false,
             "type": "prometheus",
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "exemplar": false,
-          "expr": "increase(dcgm_fi_dev_power_violation{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval]) / 1e9",
-          "legendFormat": "GPU {{gpu}}",
+          "expr": "(avg by(instance) (increase(dcgm_fi_dev_power_violation[$__rate_interval]) / 1e9)) * ($Operation== bool 1) + (min by(instance) (increase(dcgm_fi_dev_power_violation[$__rate_interval]) / 1e9)) * ($Operation== bool 2) + (max by(instance) (increase(dcgm_fi_dev_power_violation[$__rate_interval]) / 1e9)) * ($Operation== bool 3)",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
@@ -4145,277 +3108,14 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "default": false,
-        "type": "prometheus",
-        "uid": "${Datasource}"
-      },
-      "description": "The rate of data received/transmitted over the PCIe bus, including both protocol headers and data payloads, in bytes per second",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "bytes out (-) / in (+)",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 1,
-          "links": [],
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "Bps"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/.*trans.*/"
-            },
-            "properties": [
-              {
-                "id": "custom.transform",
-                "value": "negative-Y"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 130
-      },
-      "id": 2056,
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true,
-          "width": 250
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "7.5.4",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${Datasource}"
-          },
-          "editorMode": "code",
-          "expr": "rate(dcgm_fi_prof_pcie_rx_bytes{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval])",
-          "legendFormat": "GPU {{gpu}} - receive",
-          "range": true,
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${Datasource}"
-          },
-          "editorMode": "code",
-          "expr": "rate(dcgm_fi_prof_pcie_tx_bytes{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval])",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "GPU {{gpu}} - transmit",
-          "range": true,
-          "refId": "B"
-        }
-      ],
-      "title": "PCIe Throughput (RX/TX)",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "default": false,
-        "type": "prometheus",
-        "uid": "${Datasource}"
-      },
-      "description": "The rate of data received over NVLink, not including protocol headers, in bytes per second",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "bytes out (-) / in (+)",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 1,
-          "links": [],
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "Bps"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/.*trans.*/"
-            },
-            "properties": [
-              {
-                "id": "custom.transform",
-                "value": "negative-Y"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 130
-      },
-      "id": 2057,
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true,
-          "width": 250
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "7.5.4",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${Datasource}"
-          },
-          "editorMode": "code",
-          "expr": "rate(dcgm_fi_prof_nvlink_rx_bytes{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval])",
-          "legendFormat": "GPU {{gpu}} - receive",
-          "range": true,
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${Datasource}"
-          },
-          "editorMode": "code",
-          "expr": "rate(dcgm_fi_prof_nvlink_tx_bytes{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval])",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "GPU {{gpu}} - transmit",
-          "range": true,
-          "refId": "B"
-        }
-      ],
-      "title": "NVLink Throughput (RX/TX)",
-      "type": "timeseries"
-    },
-    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 138
+        "y": 114
       },
-      "id": 2022,
+      "id": 2,
       "panels": [],
       "title": "Infiniband Metrics",
       "type": "row"
@@ -4426,22 +3126,47 @@
         "type": "prometheus",
         "uid": "${Datasource}"
       },
-      "description": "Indication of IB Link status. Up:1 and Down:0",
+      "description": "IB link state by node",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "shades"
+            "mode": "continuous-GrYlRd"
           },
           "custom": {
-            "fillOpacity": 70,
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 40,
+            "gradientMode": "none",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
               "viz": false
             },
             "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
             "lineWidth": 0,
-            "spanNulls": false
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
           },
           "decimals": 1,
           "mappings": [
@@ -4479,17 +3204,6 @@
                 }
               },
               "type": "value"
-            },
-            {
-              "options": {
-                "from": 0.2,
-                "result": {
-                  "index": 6,
-                  "text": "-"
-                },
-                "to": 0.8
-              },
-              "type": "range"
             }
           ],
           "max": 5,
@@ -4510,272 +3224,40 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 139
+        "y": 115
       },
-      "id": 2029,
+      "id": 205,
       "options": {
-        "alignValue": "center",
         "legend": {
-          "displayMode": "list",
+          "calcs": [
+            "last"
+          ],
+          "displayMode": "table",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": true,
+          "sortBy": "Last",
+          "sortDesc": false
         },
-        "mergeValues": true,
-        "rowHeight": 0.9,
-        "showValue": "auto",
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
-      "pluginVersion": "11.2.2+security-01",
       "targets": [
         {
           "datasource": {
+            "default": false,
             "type": "prometheus",
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "node_infiniband_physical_state_id{instance=~\"$instance\", device!=\"mlx5_an0\"}",
-          "legendFormat": "{{device}}",
+          "expr": "min by (instance) (node_infiniband_physical_state_id{device!=\"mlx5_an0\"})",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
       "title": "IB Link Status",
-      "type": "state-timeline"
-    },
-    {
-      "datasource": {
-        "default": false,
-        "type": "prometheus",
-        "uid": "${Datasource}"
-      },
-      "description": "Indication of IB Link Flap",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "shades"
-          },
-          "custom": {
-            "fillOpacity": 70,
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineWidth": 0,
-            "spanNulls": false
-          },
-          "mappings": [
-            {
-              "options": {
-                "0": {
-                  "color": "green",
-                  "index": 1,
-                  "text": "Normal"
-                }
-              },
-              "type": "value"
-            },
-            {
-              "options": {
-                "from": 1,
-                "result": {
-                  "color": "red",
-                  "index": 0,
-                  "text": "Link Flap Event"
-                },
-                "to": 1000
-              },
-              "type": "range"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 139
-      },
-      "id": 2030,
-      "options": {
-        "alignValue": "center",
-        "legend": {
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "mergeValues": true,
-        "rowHeight": 0.9,
-        "showValue": "auto",
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.2.2+security-01",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${Datasource}"
-          },
-          "editorMode": "code",
-          "expr": "node_infiniband_link_downed_total{instance=\"$instance\",device!=\"mlx5_an0\"}",
-          "legendFormat": "{{device}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "IB Link Flap Status",
-      "type": "state-timeline"
-    },
-    {
-      "datasource": {
-        "default": false,
-        "type": "prometheus",
-        "uid": "${Datasource}"
-      },
-      "description": "The rate of data received/transmitted on the IB port",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "bytes out (-) / in (+)",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 40,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "Bps"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/.*trans.*/"
-            },
-            "properties": [
-              {
-                "id": "custom.transform",
-                "value": "negative-Y"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 147
-      },
-      "id": 2024,
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "9.0.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${Datasource}"
-          },
-          "editorMode": "code",
-          "exemplar": true,
-          "expr": "rate(node_infiniband_port_data_received_bytes_total{instance=~\"$instance\", device!=\"mlx5_an0\"}[$__rate_interval])",
-          "interval": "",
-          "legendFormat": "{{device}} - receive",
-          "range": true,
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${Datasource}"
-          },
-          "editorMode": "code",
-          "expr": "rate(node_infiniband_port_data_transmitted_bytes_total{instance=~\"$instance\", device!=\"mlx5_an0\"}[$__rate_interval])",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "{{device}} - transmit",
-          "range": true,
-          "refId": "B"
-        }
-      ],
-      "title": "IB Throughput (RX/TX)",
       "type": "timeseries"
     },
     {
@@ -4784,525 +3266,7 @@
         "type": "prometheus",
         "uid": "${Datasource}"
       },
-      "description": "Total number of packets containing an error that were received on the port.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "Errors",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 40,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 147
-      },
-      "id": 2043,
-      "options": {
-        "legend": {
-          "calcs": [
-            "last"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "9.0.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${Datasource}"
-          },
-          "editorMode": "code",
-          "expr": "increase(node_infiniband_port_errors_received_total{instance=~\"$instance\", device!=\"mlx5_an0\"}[$__rate_interval])",
-          "legendFormat": "{{device}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Port Rcv Errors",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "default": false,
-        "type": "prometheus",
-        "uid": "${Datasource}"
-      },
-      "description": "Total number of packets received on the switch physical port that are discarded.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "Errors",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 40,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 155
-      },
-      "id": 2044,
-      "options": {
-        "legend": {
-          "calcs": [
-            "last"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "9.0.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${Datasource}"
-          },
-          "editorMode": "code",
-          "expr": "increase(node_infiniband_port_constraint_errors_received_total{instance=~\"$instance\", device!=\"mlx5_an0\"}[$__rate_interval])",
-          "legendFormat": "{{device}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Port Rcv Constraint Errors",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "default": false,
-        "type": "prometheus",
-        "uid": "${Datasource}"
-      },
-      "description": "Number of ticks during which the port had data to transmit but no data was sent during the entire tick",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "ticks/sec",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 40,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 155
-      },
-      "id": 2045,
-      "options": {
-        "legend": {
-          "calcs": [
-            "last"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "9.0.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${Datasource}"
-          },
-          "editorMode": "code",
-          "expr": "rate(node_infiniband_port_transmit_wait_total{instance=~\"$instance\", device!=\"mlx5_an0\"}[$__rate_interval])",
-          "legendFormat": "{{device}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Port Xmit Wait",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "default": false,
-        "type": "prometheus",
-        "uid": "${Datasource}"
-      },
-      "description": "Total number of packets not transmitted from the switch physical port.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "Errors",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 40,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 163
-      },
-      "id": 2047,
-      "options": {
-        "legend": {
-          "calcs": [
-            "last"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "9.0.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${Datasource}"
-          },
-          "editorMode": "code",
-          "expr": "increase(node_infiniband_port_constraint_errors_transmitted_total{instance=~\"$instance\", device!=\"mlx5_an0\"}[$__rate_interval])",
-          "legendFormat": "{{device}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Port Xmit Constraint Errors",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "default": false,
-        "type": "prometheus",
-        "uid": "${Datasource}"
-      },
-      "description": "Total number of outbound packets discarded by the port because the port is down or congested.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "Discards",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 40,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 163
-      },
-      "id": 2046,
-      "options": {
-        "legend": {
-          "calcs": [
-            "last"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "9.0.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${Datasource}"
-          },
-          "editorMode": "code",
-          "expr": "increase(node_infiniband_port_discards_transmitted_total{instance=~\"$instance\", device!=\"mlx5_an0\"}[$__rate_interval])",
-          "legendFormat": "{{device}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Port Xmit Discards",
-      "type": "timeseries"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 171
-      },
-      "id": 2058,
-      "panels": [],
-      "title": "NVLink Metrics",
-      "type": "row"
-    },
-    {
-      "datasource": {
-        "default": false,
-        "type": "prometheus",
-        "uid": "${Datasource}"
-      },
-      "description": "Last NVLink Recovery Failed Event",
+      "description": "Last IB Link Flap",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -5375,10 +3339,10 @@
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 0,
-        "y": 172
+        "x": 12,
+        "y": 115
       },
-      "id": 2066,
+      "id": 226,
       "options": {
         "cellHeight": "sm",
         "footer": {
@@ -5403,7 +3367,751 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "clamp_max(increase(dcgm_fi_dev_nvlink_count_link_recovery_failed_events{instance=\"$instance\"}[$__rate_interval]), 1)",
+          "expr": "clamp_max(increase(node_infiniband_link_downed_total[$__rate_interval]), 1)",
+          "format": "table",
+          "instant": false,
+          "legendFormat": "{{instance}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Last IB Link Flap",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "instance",
+                "Value",
+                "port",
+                "device"
+              ]
+            }
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value": {
+                "aggregations": [
+                  "last"
+                ],
+                "operation": "aggregate"
+              },
+              "device": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "hostname": {
+                "aggregations": [
+                  "last"
+                ]
+              },
+              "ib_port": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "instance": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "port": {
+                "aggregations": []
+              },
+              "time_stamp": {
+                "aggregations": [
+                  "last"
+                ],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "includeByName": {},
+            "indexByName": {
+              "Value (last)": 2,
+              "device": 1,
+              "instance": 0
+            },
+            "renameByName": {
+              "Value (last)": "Link Health",
+              "device": "Device",
+              "hostname": "Instance",
+              "ib_port": "IB device",
+              "instance": "Instance",
+              "port": "Port",
+              "time_stamp": "Time Stamp",
+              "time_stamp (last)": "Time Stamp"
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "field": "Link Health"
+              }
+            ]
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "default": false,
+        "type": "prometheus",
+        "uid": "${Datasource}"
+      },
+      "description": "IB (RX+TX) throughput ",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "bytes out (-) / in (+)",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "Bps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/.*trans.*/"
+            },
+            "properties": [
+              {
+                "id": "custom.transform",
+                "value": "negative-Y"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 123
+      },
+      "id": 201,
+      "options": {
+        "legend": {
+          "calcs": [
+            "min",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "default": false,
+            "type": "prometheus",
+            "uid": "${Datasource}"
+          },
+          "editorMode": "code",
+          "expr": "(avg by(instance) (rate(node_infiniband_port_data_received_bytes_total{device!=\"mlx5_an0\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (rate(node_infiniband_port_data_received_bytes_total{device!=\"mlx5_an0\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (rate(node_infiniband_port_data_received_bytes_total{device!=\"mlx5_an0\"}[$__rate_interval]))) * ($Operation== bool 3)",
+          "legendFormat": "{{instance}} - receive",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${Datasource}"
+          },
+          "editorMode": "code",
+          "expr": "(avg by(instance) (rate(node_infiniband_port_data_transmitted_bytes_total{device!=\"mlx5_an0\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (rate(node_infiniband_port_data_transmitted_bytes_total{device!=\"mlx5_an0\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (rate(node_infiniband_port_data_transmitted_bytes_total{device!=\"mlx5_an0\"}[$__rate_interval]))) * ($Operation== bool 3)",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "{{instance}} - transmit",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "IB Throughput",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "default": false,
+        "type": "prometheus",
+        "uid": "${Datasource}"
+      },
+      "description": "Port receive errors by node",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Errors",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 123
+      },
+      "id": 202,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "default": false,
+            "type": "prometheus",
+            "uid": "${Datasource}"
+          },
+          "editorMode": "code",
+          "expr": "(avg by(instance) (increase(node_infiniband_port_errors_received_total{device!=\"mlx5_an0\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (increase(node_infiniband_port_errors_received_total{device!=\"mlx5_an0\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (increase(node_infiniband_port_errors_received_total{device!=\"mlx5_an0\"}[$__rate_interval]))) * ($Operation== bool 3)",
+          "legendFormat": "{{instance}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "IB Port Receive Errors",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "default": false,
+        "type": "prometheus",
+        "uid": "${Datasource}"
+      },
+      "description": "IB port constraint errors by node",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Errors",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 131
+      },
+      "id": 203,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "default": false,
+            "type": "prometheus",
+            "uid": "${Datasource}"
+          },
+          "editorMode": "code",
+          "expr": "(avg by(instance) (increase(node_infiniband_port_constraint_errors_received_total{device!=\"mlx5_an0\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (increase(node_infiniband_port_constraint_errors_received_total{device!=\"mlx5_an0\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (increase(node_infiniband_port_constraint_errors_received_total{device!=\"mlx5_an0\"}[$__rate_interval]))) * ($Operation== bool 3)",
+          "legendFormat": "{{instance}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "IB Port Constraint Errors",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "default": false,
+        "type": "prometheus",
+        "uid": "${Datasource}"
+      },
+      "description": "IB port transmit wait by node",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "ticks/sec",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 131
+      },
+      "id": 204,
+      "options": {
+        "legend": {
+          "calcs": [
+            "min",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "default": false,
+            "type": "prometheus",
+            "uid": "${Datasource}"
+          },
+          "editorMode": "code",
+          "expr": "(avg by(instance) (rate(node_infiniband_port_transmit_wait_total{device!=\"mlx5_an0\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (rate(node_infiniband_port_transmit_wait_total{device!=\"mlx5_an0\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (rate(node_infiniband_port_transmit_wait_total{device!=\"mlx5_an0\"}[$__rate_interval]))) * ($Operation== bool 3)",
+          "legendFormat": "{{instance}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "IB Port Transmit Wait",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "default": false,
+        "type": "prometheus",
+        "uid": "${Datasource}"
+      },
+      "description": "IB port discards by node",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Discards/sec",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 139
+      },
+      "id": 206,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "default": false,
+            "type": "prometheus",
+            "uid": "${Datasource}"
+          },
+          "editorMode": "code",
+          "expr": "(avg by(instance) (rate(node_infiniband_port_discards_transmitted_total{device!=\"mlx5_an0\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (rate(node_infiniband_port_discards_transmitted_total{device!=\"mlx5_an0\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (rate(node_infiniband_port_discards_transmitted_total{device!=\"mlx5_an0\"}[$__rate_interval]))) * ($Operation== bool 3)",
+          "legendFormat": "{{instance}} - TX",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "default": false,
+            "type": "prometheus",
+            "uid": "${Datasource}"
+          },
+          "editorMode": "code",
+          "expr": "(avg by(instance) (rate(node_infiniband_port_discards_received_total{device!=\"mlx5_an0\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (rate(node_infiniband_port_discards_received_total{device!=\"mlx5_an0\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (rate(node_infiniband_port_discards_received_total{device!=\"mlx5_an0\"}[$__rate_interval]))) * ($Operation== bool 3)",
+          "hide": false,
+          "legendFormat": "{{instance}} - RX",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "IB Port Discards",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 147
+      },
+      "id": 216,
+      "panels": [],
+      "title": "NVLink Metrics",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "default": false,
+        "type": "prometheus",
+        "uid": "${Datasource}"
+      },
+      "description": "Last NVLink Recovery Failed Event",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "inspect": false
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Link Health"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "0": {
+                        "color": "green",
+                        "index": 0,
+                        "text": "Stable"
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "from": 0,
+                      "result": {
+                        "color": "red",
+                        "index": 1,
+                        "text": "Link Flap Detected"
+                      },
+                      "to": 1000
+                    },
+                    "type": "range"
+                  }
+                ]
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 148
+      },
+      "id": 227,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "enablePagination": true,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "11.2.8+security-01",
+      "targets": [
+        {
+          "datasource": {
+            "default": false,
+            "type": "prometheus",
+            "uid": "${Datasource}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "clamp_max(increase(dcgm_fi_dev_nvlink_count_link_recovery_failed_events[$__rate_interval]), 1)",
           "format": "table",
           "instant": false,
           "legendFormat": "{{instance}}",
@@ -5419,8 +4127,9 @@
             "include": {
               "names": [
                 "device",
-                "gpu",
-                "Value"
+                "instance",
+                "Value",
+                "gpu"
               ]
             }
           }
@@ -5452,7 +4161,8 @@
                 "operation": "groupby"
               },
               "instance": {
-                "aggregations": []
+                "aggregations": [],
+                "operation": "groupby"
               },
               "port": {
                 "aggregations": []
@@ -5494,6 +4204,7 @@
             "fields": {},
             "sort": [
               {
+                "desc": false,
                 "field": "Link Health"
               }
             ]
@@ -5576,10 +4287,10 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 172
+        "y": 148
       },
       "hiddenSeries": false,
-      "id": 2060,
+      "id": 220,
       "legend": {
         "alignAsTable": true,
         "avg": false,
@@ -5601,7 +4312,7 @@
           "calcs": [
             "lastNotNull"
           ],
-          "displayMode": "list",
+          "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
         },
@@ -5625,8 +4336,8 @@
             "uid": "daamw-mscycle"
           },
           "editorMode": "code",
-          "expr": "increase(dcgm_fi_dev_nvlink_count_local_link_integrity_errors{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval])",
-          "legendFormat": "GPU {{gpu}}",
+          "expr": "(avg by(instance) (increase(dcgm_fi_dev_nvlink_count_local_link_integrity_errors[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (increase(dcgm_fi_dev_nvlink_count_local_link_integrity_errors[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (increase(dcgm_fi_dev_nvlink_count_local_link_integrity_errors[$__rate_interval]))) * ($Operation== bool 3)",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
@@ -5751,13 +4462,13 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 180
+        "y": 156
       },
-      "id": 2063,
+      "id": 217,
       "options": {
         "legend": {
           "calcs": [
-            "lastNotNull",
+            "min",
             "max"
           ],
           "displayMode": "table",
@@ -5778,8 +4489,8 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "rate(dcgm_fi_prof_nvlink_rx_bytes{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval])",
-          "legendFormat": "GPU {{gpu}} - receive",
+          "expr": "(avg by(instance) (rate(dcgm_fi_prof_nvlink_rx_bytes[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (rate(dcgm_fi_prof_nvlink_rx_bytes[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (rate(dcgm_fi_prof_nvlink_rx_bytes[$__rate_interval]))) * ($Operation== bool 3)",
+          "legendFormat": "{{instance}} - receive ",
           "range": true,
           "refId": "A"
         },
@@ -5789,15 +4500,15 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "rate(dcgm_fi_prof_nvlink_tx_bytes{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval])",
+          "expr": "(avg by(instance) (rate(dcgm_fi_prof_nvlink_tx_bytes[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (rate(dcgm_fi_prof_nvlink_tx_bytes[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (rate(dcgm_fi_prof_nvlink_tx_bytes[$__rate_interval]))) * ($Operation== bool 3)",
           "hide": false,
           "instant": false,
-          "legendFormat": "GPU {{gpu}} - transmit",
+          "legendFormat": "{{instance}} - transmit",
           "range": true,
           "refId": "B"
         }
       ],
-      "title": "NVLink Throughput (RX/TX)",
+      "title": "NVLink Throughput",
       "type": "timeseries"
     },
     {
@@ -5874,10 +4585,10 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 180
+        "y": 156
       },
       "hiddenSeries": false,
-      "id": 2061,
+      "id": 219,
       "legend": {
         "alignAsTable": true,
         "avg": false,
@@ -5899,7 +4610,7 @@
           "calcs": [
             "lastNotNull"
           ],
-          "displayMode": "list",
+          "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
         },
@@ -5923,8 +4634,8 @@
             "uid": "daamw-mscycle"
           },
           "editorMode": "code",
-          "expr": "increase(dcgm_fi_dev_nvlink_count_rx_errors{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval])",
-          "legendFormat": "GPU {{gpu}}",
+          "expr": "(avg by(instance) (increase(dcgm_fi_dev_nvlink_count_rx_errors[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (increase(dcgm_fi_dev_nvlink_count_rx_errors[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (increase(dcgm_fi_dev_nvlink_count_rx_errors[$__rate_interval]))) * ($Operation== bool 3)",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
@@ -5987,7 +4698,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "Errors",
+            "axisLabel": "Discards",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
@@ -6040,10 +4751,10 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 188
+        "y": 164
       },
       "hiddenSeries": false,
-      "id": 2062,
+      "id": 221,
       "legend": {
         "alignAsTable": true,
         "avg": false,
@@ -6065,7 +4776,7 @@
           "calcs": [
             "lastNotNull"
           ],
-          "displayMode": "list",
+          "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
         },
@@ -6089,8 +4800,8 @@
             "uid": "daamw-mscycle"
           },
           "editorMode": "code",
-          "expr": "increase(dcgm_fi_dev_nvlink_count_tx_discards{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval])",
-          "legendFormat": "GPU {{gpu}}",
+          "expr": "(avg by(instance) (increase(dcgm_fi_dev_nvlink_count_tx_discards[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (increase(dcgm_fi_dev_nvlink_count_tx_discards[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (increase(dcgm_fi_dev_nvlink_count_tx_discards[$__rate_interval]))) * ($Operation== bool 3)",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
@@ -6133,14 +4844,73 @@
       }
     }
   ],
+  "refresh": "",
   "revision": 1,
   "schemaVersion": 39,
-  "tags": [
-    "HPC/AI Researcher",
-    "HPC/AI Data scientist"
-  ],
+  "tags": [],
   "templating": {
     "list": [
+      {
+        "current": {
+          "isNone": true,
+          "selected": false,
+          "text": "None",
+          "value": ""
+        },
+        "datasource": {
+          "default": false,
+          "type": "prometheus",
+          "uid": "${Datasource}"
+        },
+        "definition": "",
+        "hide": 2,
+        "includeAll": false,
+        "label": "Job ID",
+        "multi": true,
+        "name": "job_id",
+        "options": [],
+        "query": {
+          "query": "",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "Average",
+          "value": "1"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "Operation",
+        "options": [
+          {
+            "selected": true,
+            "text": "Average",
+            "value": "1"
+          },
+          {
+            "selected": false,
+            "text": "Minimum",
+            "value": "2"
+          },
+          {
+            "selected": false,
+            "text": "Maximum",
+            "value": "3"
+          }
+        ],
+        "query": "Average : 1, Minimum : 2,  Maximum : 3",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
       {
         "current": {
           "selected": false,
@@ -6159,129 +4929,6 @@
         "regex": "",
         "skipUrlSync": false,
         "type": "datasource"
-      },
-      {
-        "current": {
-          "selected": true,
-          "text": "aks-hpcskus-38703046-vmss000000",
-          "value": "aks-hpcskus-38703046-vmss000000"
-        },
-        "datasource": {
-          "type": "prometheus",
-          "uid": "${Datasource}"
-        },
-        "definition": "node_uname_info",
-        "hide": 0,
-        "includeAll": false,
-        "label": "Hostname",
-        "multi": false,
-        "name": "instance",
-        "options": [],
-        "query": {
-          "query": "node_uname_info",
-          "refId": "dcgm-exporter-instance-Variable-Query"
-        },
-        "refresh": 1,
-        "regex": "/.*nodename=\"([^\"]*).*/",
-        "skipUrlSync": false,
-        "sort": 1,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "current": {
-          "selected": false,
-          "text": [
-            "All"
-          ],
-          "value": [
-            "$__all"
-          ]
-        },
-        "datasource": {
-          "type": "prometheus",
-          "uid": "${Datasource}"
-        },
-        "definition": "label_values(node_cpu_seconds_total{instance=\"$instance\"}, cpu)",
-        "hide": 0,
-        "includeAll": true,
-        "label": "CPU",
-        "multi": true,
-        "name": "cpu",
-        "options": [],
-        "query": {
-          "query": "label_values(node_cpu_seconds_total{instance=\"$instance\"}, cpu)",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "current": {
-          "selected": false,
-          "text": [
-            "All"
-          ],
-          "value": [
-            "$__all"
-          ]
-        },
-        "datasource": {
-          "type": "prometheus",
-          "uid": "${Datasource}"
-        },
-        "definition": "label_values(node_disk_reads_completed_total{instance=\"$instance\"}, device)",
-        "hide": 0,
-        "includeAll": true,
-        "label": "Disk Devices",
-        "multi": true,
-        "name": "diskdevices",
-        "options": [],
-        "query": {
-          "query": "label_values(node_disk_reads_completed_total{instance=\"$instance\"}, device)",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": "/^(?!dm-|loop|tmpfs)/",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "current": {
-          "selected": false,
-          "text": [
-            "All"
-          ],
-          "value": [
-            "$__all"
-          ]
-        },
-        "datasource": {
-          "type": "prometheus",
-          "uid": "${Datasource}"
-        },
-        "definition": "label_values(dcgm_fi_dev_gpu_util{instance=\"$instance\"}, gpu)",
-        "hide": 0,
-        "includeAll": true,
-        "label": "GPU",
-        "multi": true,
-        "name": "gpu",
-        "options": [],
-        "query": {
-          "query": "label_values(dcgm_fi_dev_gpu_util{instance=\"$instance\"}, gpu)",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
       }
     ]
   },
@@ -6290,7 +4937,6 @@
     "to": "now"
   },
   "timepicker": {
-    "hidden": false,
     "refresh_intervals": [
       "5s",
       "10s",
@@ -6299,8 +4945,8 @@
     ]
   },
   "timezone": "browser",
-  "title": "Combined Node, IB, GPU & NVLink Metrics Dashboard (w/o GPU Profiling)",
-  "uid": "9Qxi6EuNVsxk",
-  "version": 1,
+  "title": "Cluster View (Time Series)",
+  "uid": "ncgMA4Z4k2xx",
+  "version": 2,
   "weekStart": ""
 }

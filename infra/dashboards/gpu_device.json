@@ -893,44 +893,19 @@
         "type": "prometheus",
         "uid": "${Datasource}"
       },
-      "description": "XID Codes",
+      "description": "Last XID Code Present(> 0 indicates XID error)",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "thresholds"
           },
           "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
             },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
+            "filterable": true,
+            "inspect": false
           },
           "mappings": [],
           "thresholds": {
@@ -941,9 +916,51 @@
                 "value": null
               }
             ]
-          }
+          },
+          "unit": "none"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "XID Code"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "0": {
+                        "color": "green",
+                        "index": 0,
+                        "text": "0 (Normal)"
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "from": 1,
+                      "result": {
+                        "color": "red",
+                        "index": 1
+                      },
+                      "to": 1000
+                    },
+                    "type": "range"
+                  }
+                ]
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 8,
@@ -951,38 +968,134 @@
         "x": 0,
         "y": 37
       },
-      "id": 53,
+      "id": 62,
       "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull"
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "enablePagination": true,
+          "fields": "",
+          "reducer": [
+            "sum"
           ],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
+          "show": false
         },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "GPU"
+          }
+        ]
       },
       "pluginVersion": "11.2.8+security-01",
       "targets": [
         {
           "datasource": {
+            "default": false,
             "type": "prometheus",
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "dcgm_fi_dev_xid_errors{instance=~\"$instance\", gpu=~\"$gpu\"}",
-          "format": "time_series",
-          "legendFormat": "GPU {{gpu}}",
+          "expr": "DCGM_FI_DEV_XID_ERRORS{instance=\"$instance\"}",
+          "format": "table",
+          "legendFormat": "__auto",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "XID Codes",
-      "type": "timeseries"
+      "title": "Last GPU XID Code",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "device",
+                "gpu",
+                "hostname",
+                "Value",
+                "instance"
+              ]
+            }
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "GPU ID": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "Value": {
+                "aggregations": [
+                  "last"
+                ],
+                "operation": "aggregate"
+              },
+              "device": {
+                "aggregations": []
+              },
+              "gpu": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "gpu_id": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "hostname": {
+                "aggregations": []
+              },
+              "instance": {
+                "aggregations": []
+              },
+              "time_stamp": {
+                "aggregations": [
+                  "last"
+                ],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "includeByName": {},
+            "indexByName": {
+              "Value (last)": 2,
+              "gpu": 1,
+              "instance": 0
+            },
+            "renameByName": {
+              "Value": "XID code",
+              "Value (last)": "XID Code",
+              "gpu": "GPU",
+              "gpu_id": "GPU ID",
+              "hostname": "Instance",
+              "instance": "Instance",
+              "time_stamp": "Time Stamp",
+              "time_stamp (last)": "Time Stamp"
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "desc": true,
+                "field": "XID Code"
+              }
+            ]
+          }
+        }
+      ],
+      "type": "table"
     },
     {
       "collapsed": false,
@@ -1007,6 +1120,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": {
+        "default": false,
         "type": "prometheus",
         "uid": "${Datasource}"
       },
@@ -1021,12 +1135,12 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "",
+            "axisLabel": "Errors",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "fillOpacity": 0,
+            "fillOpacity": 10,
             "gradientMode": "none",
             "hideFrom": {
               "legend": false,
@@ -1040,7 +1154,7 @@
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "always",
+            "showPoints": "never",
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -1077,7 +1191,7 @@
         "y": 46
       },
       "hiddenSeries": false,
-      "id": 46,
+      "id": 56,
       "legend": {
         "alignAsTable": true,
         "avg": false,
@@ -1096,7 +1210,9 @@
       "options": {
         "alertThreshold": true,
         "legend": {
-          "calcs": [],
+          "calcs": [
+            "lastNotNull"
+          ],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": true
@@ -1116,8 +1232,14 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "dcgm_fi_dev_ecc_sbe_agg_total{instance=~\"$instance\", gpu=~\"$gpu\"}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "daamw-mscycle"
+          },
+          "editorMode": "code",
+          "expr": "increase(dcgm_fi_dev_ecc_sbe_agg_total{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval])",
           "legendFormat": "GPU {{gpu}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -1164,6 +1286,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": {
+        "default": false,
         "type": "prometheus",
         "uid": "${Datasource}"
       },
@@ -1178,12 +1301,12 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "",
+            "axisLabel": "Errors",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "fillOpacity": 0,
+            "fillOpacity": 10,
             "gradientMode": "none",
             "hideFrom": {
               "legend": false,
@@ -1197,7 +1320,7 @@
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "auto",
+            "showPoints": "never",
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -1234,7 +1357,7 @@
         "y": 46
       },
       "hiddenSeries": false,
-      "id": 47,
+      "id": 57,
       "legend": {
         "alignAsTable": true,
         "avg": false,
@@ -1253,7 +1376,9 @@
       "options": {
         "alertThreshold": true,
         "legend": {
-          "calcs": [],
+          "calcs": [
+            "lastNotNull"
+          ],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": true
@@ -1273,8 +1398,14 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "dcgm_fi_dev_ecc_dbe_agg_total{instance=~\"$instance\", gpu=~\"$gpu\"}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "daamw-mscycle"
+          },
+          "editorMode": "code",
+          "expr": "increase(dcgm_fi_dev_ecc_dbe_agg_total{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval])",
           "legendFormat": "GPU {{gpu}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -1321,6 +1452,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": {
+        "default": false,
         "type": "prometheus",
         "uid": "${Datasource}"
       },
@@ -1335,12 +1467,12 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "",
+            "axisLabel": "Errors",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "fillOpacity": 0,
+            "fillOpacity": 10,
             "gradientMode": "none",
             "hideFrom": {
               "legend": false,
@@ -1354,7 +1486,7 @@
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "auto",
+            "showPoints": "never",
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -1390,7 +1522,7 @@
         "y": 54
       },
       "hiddenSeries": false,
-      "id": 48,
+      "id": 58,
       "legend": {
         "alignAsTable": true,
         "avg": false,
@@ -1409,7 +1541,9 @@
       "options": {
         "alertThreshold": true,
         "legend": {
-          "calcs": [],
+          "calcs": [
+            "lastNotNull"
+          ],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": true
@@ -1433,8 +1567,10 @@
             "type": "prometheus",
             "uid": "${Datasource}"
           },
-          "expr": "dcgm_fi_dev_ecc_sbe_vol_total{instance=~\"$instance\", gpu=~\"$gpu\"}",
+          "editorMode": "code",
+          "expr": "increase(dcgm_fi_dev_ecc_sbe_vol_total{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval])",
           "legendFormat": "GPU {{gpu}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -1481,6 +1617,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": {
+        "default": false,
         "type": "prometheus",
         "uid": "${Datasource}"
       },
@@ -1495,12 +1632,12 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "",
+            "axisLabel": "Errors",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "fillOpacity": 0,
+            "fillOpacity": 10,
             "gradientMode": "none",
             "hideFrom": {
               "legend": false,
@@ -1514,7 +1651,7 @@
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "auto",
+            "showPoints": "never",
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -1551,7 +1688,7 @@
         "y": 54
       },
       "hiddenSeries": false,
-      "id": 49,
+      "id": 59,
       "legend": {
         "alignAsTable": true,
         "avg": false,
@@ -1570,7 +1707,9 @@
       "options": {
         "alertThreshold": true,
         "legend": {
-          "calcs": [],
+          "calcs": [
+            "lastNotNull"
+          ],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": true
@@ -1590,8 +1729,14 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "dcgm_fi_dev_ecc_dbe_vol_total{instance=~\"$instance\", gpu=~\"$gpu\"}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "daamw-mscycle"
+          },
+          "editorMode": "code",
+          "expr": "increase(dcgm_fi_dev_ecc_dbe_vol_total{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval])",
           "legendFormat": "GPU {{gpu}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -1651,47 +1796,23 @@
         "type": "prometheus",
         "uid": "${Datasource}"
       },
-      "description": "Current throttle event reasons code ",
+      "description": "Last GPU Throttle Code",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "thresholds"
           },
           "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
             },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
+            "filterable": true,
+            "inspect": false
           },
           "decimals": 0,
           "mappings": [],
+          "max": 1,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -1699,16 +1820,66 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
-          },
-          "unit": "short"
+          }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Throttle Code"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "1": {
+                        "color": "green",
+                        "index": 2,
+                        "text": "1 Idle (Normal)"
+                      },
+                      "4": {
+                        "color": "semi-dark-red",
+                        "index": 1,
+                        "text": "4 SW Power Cap"
+                      },
+                      "8": {
+                        "color": "dark-orange",
+                        "index": 0,
+                        "text": "8 HW Slowdown"
+                      },
+                      "20": {
+                        "color": "light-red",
+                        "index": 3,
+                        "text": "20 SW Thermal"
+                      },
+                      "40": {
+                        "color": "red",
+                        "index": 4,
+                        "text": "40 HW Thermal"
+                      },
+                      "80": {
+                        "color": "semi-dark-red",
+                        "index": 5,
+                        "text": "80 HW Power Brake"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 8,
@@ -1716,41 +1887,135 @@
         "x": 0,
         "y": 63
       },
-      "id": 54,
+      "id": 63,
       "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull"
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "enablePagination": true,
+          "fields": "",
+          "reducer": [
+            "sum"
           ],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
+          "show": false
         },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "GPU"
+          }
+        ]
       },
-      "pluginVersion": "9.4.7",
+      "pluginVersion": "11.2.8+security-01",
       "targets": [
         {
           "datasource": {
+            "default": false,
             "type": "prometheus",
             "uid": "${Datasource}"
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "dcgm_fi_dev_clocks_event_reasons{instance=~\"$instance\", gpu=~\"$gpu\"}",
-          "legendFormat": "GPU {{gpu}}",
+          "expr": "DCGM_FI_DEV_CLOCKS_EVENT_REASONS{instance=\"$instance\"}",
+          "format": "table",
+          "instant": false,
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "GPU Throttle Code",
-      "type": "timeseries"
+      "title": "Last GPU Throttle Code",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "device",
+                "gpu",
+                "Value"
+              ]
+            }
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value": {
+                "aggregations": [
+                  "last"
+                ],
+                "operation": "aggregate"
+              },
+              "device": {
+                "aggregations": []
+              },
+              "gpu": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "hostname": {
+                "aggregations": [
+                  "last"
+                ]
+              },
+              "ib_port": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "instance": {
+                "aggregations": []
+              },
+              "time_stamp": {
+                "aggregations": [
+                  "last"
+                ],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "includeByName": {},
+            "indexByName": {
+              "Value (last)": 2,
+              "gpu": 1,
+              "instance": 0
+            },
+            "renameByName": {
+              "Value (last)": "Throttle Code",
+              "gpu": "GPU",
+              "hostname": "Instance",
+              "ib_port": "IB device",
+              "instance": "Instance",
+              "time_stamp": "Time Stamp",
+              "time_stamp (last)": "Time Stamp"
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "desc": true,
+                "field": "Throttle Code"
+              }
+            ]
+          }
+        }
+      ],
+      "type": "table"
     },
     {
       "datasource": {
+        "default": false,
         "type": "prometheus",
         "uid": "${Datasource}"
       },
@@ -1764,7 +2029,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "",
+            "axisLabel": "Seconds Throttled",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
@@ -1795,7 +2060,6 @@
           },
           "decimals": 2,
           "mappings": [],
-          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1808,8 +2072,7 @@
                 "value": 80
               }
             ]
-          },
-          "unit": "s"
+          }
         },
         "overrides": []
       },
@@ -1819,7 +2082,7 @@
         "x": 12,
         "y": 63
       },
-      "id": 51,
+      "id": 60,
       "options": {
         "legend": {
           "calcs": [
@@ -1843,7 +2106,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "dcgm_fi_dev_thermal_violation{instance=~\"$instance\", gpu=~\"$gpu\"} / 10^6",
+          "expr": "increase(dcgm_fi_dev_thermal_violation{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval]) / 1e9",
           "legendFormat": "GPU {{gpu}}",
           "range": true,
           "refId": "A"
@@ -1854,6 +2117,7 @@
     },
     {
       "datasource": {
+        "default": false,
         "type": "prometheus",
         "uid": "${Datasource}"
       },
@@ -1867,7 +2131,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "",
+            "axisLabel": "Seconds Throttled",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
@@ -1898,7 +2162,6 @@
           },
           "decimals": 2,
           "mappings": [],
-          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1911,8 +2174,7 @@
                 "value": 80
               }
             ]
-          },
-          "unit": "s"
+          }
         },
         "overrides": []
       },
@@ -1922,7 +2184,7 @@
         "x": 0,
         "y": 71
       },
-      "id": 52,
+      "id": 61,
       "options": {
         "legend": {
           "calcs": [
@@ -1946,7 +2208,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "dcgm_fi_dev_power_violation{instance=~\"$instance\", gpu=~\"$gpu\"} / 10^6",
+          "expr": "increase(dcgm_fi_dev_power_violation{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval]) / 1e9",
           "legendFormat": "GPU {{gpu}}",
           "range": true,
           "refId": "A"
@@ -1954,6 +2216,855 @@
       ],
       "title": "Power Violation Elapsed Time",
       "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 79
+      },
+      "id": 64,
+      "panels": [],
+      "title": "NVLink",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "default": false,
+        "type": "prometheus",
+        "uid": "${Datasource}"
+      },
+      "description": "Last NVLink Recovery Failed Event",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "inspect": false
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Link Health"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "0": {
+                        "color": "green",
+                        "index": 0,
+                        "text": "Stable"
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "from": 0,
+                      "result": {
+                        "color": "red",
+                        "index": 1,
+                        "text": "Link Flap Detected"
+                      },
+                      "to": 1000
+                    },
+                    "type": "range"
+                  }
+                ]
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 80
+      },
+      "id": 65,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "enablePagination": true,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "11.2.8+security-01",
+      "targets": [
+        {
+          "datasource": {
+            "default": false,
+            "type": "prometheus",
+            "uid": "${Datasource}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "clamp_max(increase(dcgm_fi_dev_nvlink_count_link_recovery_failed_events{instance=\"$instance\"}[$__rate_interval]), 1)",
+          "format": "table",
+          "instant": false,
+          "legendFormat": "{{instance}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Last NVLink Recovery Failed Event",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "device",
+                "gpu",
+                "Value"
+              ]
+            }
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value": {
+                "aggregations": [
+                  "last"
+                ],
+                "operation": "aggregate"
+              },
+              "device": {
+                "aggregations": []
+              },
+              "gpu": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "hostname": {
+                "aggregations": [
+                  "last"
+                ]
+              },
+              "ib_port": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "instance": {
+                "aggregations": []
+              },
+              "port": {
+                "aggregations": []
+              },
+              "time_stamp": {
+                "aggregations": [
+                  "last"
+                ],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "includeByName": {},
+            "indexByName": {
+              "Value (last)": 2,
+              "gpu": 1,
+              "instance": 0
+            },
+            "renameByName": {
+              "Value (last)": "Link Health",
+              "gpu": "GPU",
+              "hostname": "Instance",
+              "ib_port": "IB device",
+              "instance": "Instance",
+              "port": "Port",
+              "time_stamp": "Time Stamp",
+              "time_stamp (last)": "Time Stamp"
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "field": "Link Health"
+              }
+            ]
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "default": false,
+        "type": "prometheus",
+        "uid": "${Datasource}"
+      },
+      "decimals": 0,
+      "description": "Total number of times that the count of local errors exceeded the set threshold",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Errors",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 40,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "links": [],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 80
+      },
+      "hiddenSeries": false,
+      "id": 66,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "hideEmpty": false,
+        "max": true,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true,
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "daamw-mscycle"
+          },
+          "editorMode": "code",
+          "expr": "increase(dcgm_fi_dev_nvlink_count_local_link_integrity_errors{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval])",
+          "legendFormat": "GPU {{gpu}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "Link Integrity Errors",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "timeseries",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:3014",
+          "decimals": 0,
+          "format": "short",
+          "label": "",
+          "logBase": 1,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:3015",
+          "decimals": 0,
+          "format": "short",
+          "logBase": 1,
+          "min": "0",
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "datasource": {
+        "default": false,
+        "type": "prometheus",
+        "uid": "${Datasource}"
+      },
+      "description": "The rate of data received over NVLink, not including protocol headers, in bytes per second",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "bytes out (-) / in (+)",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 1,
+          "links": [],
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "Bps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/.*trans.*/"
+            },
+            "properties": [
+              {
+                "id": "custom.transform",
+                "value": "negative-Y"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 88
+      },
+      "id": 67,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "width": 250
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "7.5.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${Datasource}"
+          },
+          "editorMode": "code",
+          "expr": "rate(dcgm_fi_prof_nvlink_rx_bytes{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval])",
+          "legendFormat": "GPU {{gpu}} - receive",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${Datasource}"
+          },
+          "editorMode": "code",
+          "expr": "rate(dcgm_fi_prof_nvlink_tx_bytes{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval])",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "GPU {{gpu}} - transmit",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "NVLink Throughput (RX/TX)",
+      "type": "timeseries"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "default": false,
+        "type": "prometheus",
+        "uid": "${Datasource}"
+      },
+      "decimals": 0,
+      "description": "Total number of packets with errors Rx on a link",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Errors",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 40,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "links": [],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 88
+      },
+      "hiddenSeries": false,
+      "id": 68,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "hideEmpty": false,
+        "max": true,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true,
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "daamw-mscycle"
+          },
+          "editorMode": "code",
+          "expr": "increase(dcgm_fi_dev_nvlink_count_rx_errors{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval])",
+          "legendFormat": "GPU {{gpu}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "Link RX Errors",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "timeseries",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:3014",
+          "decimals": 0,
+          "format": "short",
+          "label": "",
+          "logBase": 1,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:3015",
+          "decimals": 0,
+          "format": "short",
+          "logBase": 1,
+          "min": "0",
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "default": false,
+        "type": "prometheus",
+        "uid": "${Datasource}"
+      },
+      "decimals": 0,
+      "description": "Total number of TX error packets that were discarded.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Errors",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 40,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "links": [],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 96
+      },
+      "hiddenSeries": false,
+      "id": 69,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "hideEmpty": false,
+        "max": true,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true,
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "daamw-mscycle"
+          },
+          "editorMode": "code",
+          "expr": "increase(dcgm_fi_dev_nvlink_count_tx_discards{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval])",
+          "legendFormat": "GPU {{gpu}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "Port TX Discards",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "timeseries",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:3014",
+          "decimals": 0,
+          "format": "short",
+          "label": "",
+          "logBase": 1,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:3015",
+          "decimals": 0,
+          "format": "short",
+          "logBase": 1,
+          "min": "0",
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
     }
   ],
   "refresh": "5s",
@@ -1985,9 +3096,9 @@
       },
       {
         "current": {
-          "selected": false,
-          "text": "aks-agentpool-38703046-vmss000000",
-          "value": "aks-agentpool-38703046-vmss000000"
+          "selected": true,
+          "text": "gb200-vashon-9427-01",
+          "value": "gb200-vashon-9427-01"
         },
         "datasource": {
           "type": "prometheus",
@@ -2015,7 +3126,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": [
             "All"
           ],
@@ -2061,7 +3172,7 @@
   },
   "timezone": "browser",
   "title": "GPU Device View",
-  "uid": "9Qxi6EuNVxaaaaa",
+  "uid": "9Qxi6EuNVx",
   "version": 1,
   "weekStart": ""
 }
