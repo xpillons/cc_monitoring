@@ -44,7 +44,7 @@ install_prerequisites() {
     # BUG: There is no #Additional config in the slurm.conf
     # QUESTION: it should use the /sched/ccws/slurm.conf instead of the /sched/slurm.conf as the later is a link to the former
     lines_to_insert="AuthAltTypes=auth/jwt\nAuthAltParameters=jwt_key=/var/spool/slurm/statesave/jwt_hs256.key\n"
-    sed -i '/^# Additional config/i '"$lines_to_insert"'' /etc/slurm/slurm.conf
+    sed -i --follow-symlinks '/^Include azure.conf/i '"$lines_to_insert"'' /etc/slurm/slurm.conf
 
     # Create an unprivileged user for slurmrestd
     if id "slurmrestd" &>/dev/null; then
@@ -98,14 +98,13 @@ install_slurm_exporter() {
     # The following command run sucessfully
     # go run ./cmd/main.go -server http://localhost:6820 -metrics-bind-address ":9080" -per-user-metrics true
     # Added options to specify the local slurmrestd socket and per user metrics
-    # -p ${SLURM_EXPORTER_PORT}:8080
     # public image is ghcr.io/slinkyproject/slurm-exporter:0.2.1
     # Running this doesn't work. 
     # tried this to map localhost inside the container without success. Log Level is not taken into account, starts freeze at Starting exporter
     # docker run -v /var:/var -e SLURM_JWT=${SLURM_JWT} --rm -p 127.0.0.1:9080:8080 --add-host=host.docker.internal:host-gateway \
     #           slinky.slurm.net/slurm-exporter:0.3.0 -server http://host.docker.internal:6820 -per-user-metrics true --zap-log-level=5
-    docker run -v /var:/var -e SLURM_JWT=${SLURM_JWT} -d --rm \ 
-           slinky.slurm.net/slurm-exporter:0.3.0 -server http://localhost:6820 -per-user-metrics true -metrics-bind-address ":${SLURM_EXPORTER_PORT}"
+    docker run -v /var:/var -e SLURM_JWT=${SLURM_JWT} -d --rm -p 127.0.0.1:${SLURM_EXPORTER_PORT}:8080 --add-host=host.docker.internal:host-gateway \ 
+           slinky.slurm.net/slurm-exporter:0.3.0 -server http://host.docker.internal:6820 -per-user-metrics true -metrics-bind-address ":${SLURM_EXPORTER_PORT}"
 }
 
 function add_scraper() {
