@@ -18,6 +18,7 @@ if ! is_scheduler ; then
     exit 0
 fi
 
+exit 0
 echo "Installing Slurm Exporter..."
 
 install_prerequisites() {
@@ -42,7 +43,7 @@ install_prerequisites() {
 
     # Add to JWT Auth to the slurm.conf
     # Check if the line already exists
-    if grep -q "AuthAltTypes=auth/jwt" /etc/slurm/slurm.conf; then
+    if ! grep -q "AuthAltTypes=auth/jwt" /etc/slurm/slurm.conf; then
         lines_to_insert="AuthAltTypes=auth/jwt\nAuthAltParameters=jwt_key=/var/spool/slurm/statesave/jwt_hs256.key\n"
         sed -i --follow-symlinks '/^Include azure.conf/a '"$lines_to_insert"'' /etc/slurm/slurm.conf
     fi
