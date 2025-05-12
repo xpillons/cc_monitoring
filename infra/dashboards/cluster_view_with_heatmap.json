@@ -186,7 +186,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "DCGM_FI_DEV_XID_ERRORS",
+          "expr": "DCGM_FI_DEV_XID_ERRORS{cluster=\"$cluster\"}",
           "format": "table",
           "legendFormat": "{{instance}}",
           "range": true,
@@ -409,7 +409,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "DCGM_FI_DEV_CLOCKS_EVENT_REASONS",
+          "expr": "DCGM_FI_DEV_CLOCKS_EVENT_REASONS{cluster=\"$cluster\"}",
           "format": "table",
           "instant": false,
           "legendFormat": "{{instance}}",
@@ -614,7 +614,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "clamp_max(increase(dcgm_fi_dev_nvlink_count_link_recovery_failed_events[$__rate_interval]), 1)",
+          "expr": "clamp_max(increase(dcgm_fi_dev_nvlink_count_link_recovery_failed_events{cluster=\"$cluster\"}[$__rate_interval]), 1)",
           "format": "table",
           "instant": false,
           "legendFormat": "{{instance}}",
@@ -823,7 +823,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "clamp_max(increase(node_infiniband_link_downed_total{device!=\"mlx5_an0\"}[$__rate_interval]), 1)",
+          "expr": "clamp_max(increase(node_infiniband_link_downed_total{device!=\"mlx5_an0\", cluster=\"$cluster\"}[$__rate_interval]), 1)",
           "format": "table",
           "instant": false,
           "legendFormat": "{{instance}}",
@@ -1017,7 +1017,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "$operation by(instance) (dcgm_fi_dev_gpu_util)",
+          "expr": "$operation by(instance) (dcgm_fi_dev_gpu_util{cluster=\"$cluster\"})",
           "format": "heatmap",
           "legendFormat": "{{instance}}",
           "range": true,
@@ -1135,7 +1135,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "$operation by(instance) (dcgm_fi_dev_gpu_util)",
+          "expr": "$operation by(instance) (dcgm_fi_dev_gpu_util{cluster=\"$cluster\"})",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1257,7 +1257,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "${operation} by(instance) (100 * (1 - ${operation} by(instance, cpu) (rate(node_cpu_seconds_total{mode=\"idle\"}[$__rate_interval]))))",
+          "expr": "${operation} by(instance) (100 * (1 - ${operation} by(instance, cpu) (rate(node_cpu_seconds_total{mode=\"idle\",cluster=\"$cluster\"}[$__rate_interval]))))",
           "format": "heatmap",
           "legendFormat": "{{instance}}",
           "range": true,
@@ -1379,7 +1379,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "${operation} by(instance) (100 * (1 - ${operation} by(instance, cpu) (rate(node_cpu_seconds_total{mode=\"idle\"}[$__rate_interval]))))",
+          "expr": "${operation} by(instance) (100 * (1 - ${operation} by(instance, cpu) (rate(node_cpu_seconds_total{mode=\"idle\", cluster=\"$cluster\"}[$__rate_interval]))))",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1522,7 +1522,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "$operation by(instance) (dcgm_fi_dev_mem_copy_util)",
+          "expr": "$operation by(instance) (dcgm_fi_dev_mem_copy_util{cluster=\"$cluster\"})",
           "format": "heatmap",
           "legendFormat": "{{instance}}",
           "range": true,
@@ -1645,7 +1645,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "$operation by(instance) (dcgm_fi_dev_mem_copy_util)",
+          "expr": "$operation by(instance) (dcgm_fi_dev_mem_copy_util{cluster=\"$cluster\"})",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -1767,7 +1767,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "$operation by(instance) (100 * (1 - (node_memory_MemAvailable_bytes / (node_memory_MemTotal_bytes))))",
+          "expr": "$operation by(instance) (100 * (1 - (node_memory_MemAvailable_bytes{cluster=\"$cluster\"} / (node_memory_MemTotal_bytes{cluster=\"$cluster\"}))))",
           "format": "heatmap",
           "legendFormat": "{{instance}}",
           "range": true,
@@ -1889,7 +1889,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "$operation by(instance) (100 * (1 - (node_memory_MemAvailable_bytes / (node_memory_MemTotal_bytes))))",
+          "expr": "$operation by(instance) (100 * (1 - (node_memory_MemAvailable_bytes{cluster=\"$cluster\"} / (node_memory_MemTotal_bytes{cluster=\"$cluster\"}))))",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -2000,7 +2000,7 @@
           "axisPlacement": "left",
           "decimals": 0,
           "reverse": false,
-          "unit": "percent"
+          "unit": "percentunit"
         }
       },
       "pluginVersion": "11.2.8+security-01",
@@ -2011,7 +2011,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "${operation} by(instance) (\r\n  100 * rate(node_disk_io_time_seconds_total[$__rate_interval])\r\n)",
+          "expr": "${operation} by(instance) (rate(node_disk_io_time_seconds_total{cluster=\"$cluster\"}[$__rate_interval])\r\n)",
           "format": "heatmap",
           "legendFormat": "{{instance}}",
           "range": true,
@@ -2063,7 +2063,7 @@
               }
             ]
           },
-          "unit": "percent"
+          "unit": "percentunit"
         },
         "overrides": [
           {
@@ -2133,7 +2133,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "${operation} by(instance) (\r\n  100 * rate(node_disk_io_time_seconds_total[$__rate_interval])\r\n)",
+          "expr": "${operation} by(instance) (\r\n  rate(node_disk_io_time_seconds_total{cluster=\"$cluster\"}[$__rate_interval])\r\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -2255,7 +2255,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "${operation} by(instance) (\r\n  rate(node_mountstats_nfs_operations_request_time_seconds_total{operation=~\"READ|WRITE\"}[$__rate_interval])\r\n)",
+          "expr": "${operation} by(instance) (\r\n  rate(node_mountstats_nfs_operations_request_time_seconds_total{operation=~\"READ|WRITE\", cluster=\"$cluster\"}[$__rate_interval])\r\n)",
           "format": "heatmap",
           "legendFormat": "{{instance}}",
           "range": true,
@@ -2382,7 +2382,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "${operation} by(instance) (\r\n  rate(node_mountstats_nfs_operations_request_time_seconds_total{operation=~\"READ|WRITE\"}[$__rate_interval])\r\n)",
+          "expr": "${operation} by(instance) (\r\n  rate(node_mountstats_nfs_operations_request_time_seconds_total{operation=~\"READ|WRITE\", cluster=\"$cluster\"}[$__rate_interval])\r\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -2517,7 +2517,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "$operation by(instance) (dcgm_fi_dev_sm_clock)",
+          "expr": "$operation by(instance) (dcgm_fi_dev_sm_clock{cluster=\"$cluster\"})",
           "format": "heatmap",
           "legendFormat": "{{instance}}",
           "range": true,
@@ -2633,7 +2633,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "$operation by(instance) (dcgm_fi_dev_sm_clock)",
+          "expr": "$operation by(instance) (dcgm_fi_dev_sm_clock{cluster=\"$cluster\"})",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -2755,7 +2755,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "$operation by(instance) (dcgm_fi_dev_mem_clock)",
+          "expr": "$operation by(instance) (dcgm_fi_dev_mem_clock{cluster=\"$cluster\"})",
           "format": "heatmap",
           "legendFormat": "{{instance}}",
           "range": true,
@@ -2871,7 +2871,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "$operation by(instance) (dcgm_fi_dev_mem_clock)",
+          "expr": "$operation by(instance) (dcgm_fi_dev_mem_clock{cluster=\"$cluster\"})",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -2993,7 +2993,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "avg by(instance) (node_cpu_scaling_frequency_hertz)/ 1000000",
+          "expr": "avg by(instance) (node_cpu_scaling_frequency_hertz{cluster=\"$cluster\"})/ 1000000",
           "format": "heatmap",
           "legendFormat": "{{instance}}",
           "range": true,
@@ -3109,7 +3109,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "avg by(instance) (node_cpu_scaling_frequency_hertz)/ 1000000",
+          "expr": "avg by(instance) (node_cpu_scaling_frequency_hertz{cluster=\"$cluster\"})/ 1000000",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -3245,7 +3245,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "$operation by(instance) ((dcgm_fi_dev_gpu_temp / dcgm_fi_dev_gpu_max_op_temp) * 100) ",
+          "expr": "$operation by(instance) ((dcgm_fi_dev_gpu_temp{cluster=\"$cluster\"} / dcgm_fi_dev_gpu_max_op_temp{cluster=\"$cluster\"}) * 100) ",
           "format": "heatmap",
           "legendFormat": "{{instance}}",
           "range": true,
@@ -3367,7 +3367,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "$operation by(instance) ((dcgm_fi_dev_gpu_temp / dcgm_fi_dev_gpu_max_op_temp) * 100) ",
+          "expr": "$operation by(instance) ((dcgm_fi_dev_gpu_temp{cluster=\"$cluster\"} / dcgm_fi_dev_gpu_max_op_temp{cluster=\"$cluster\"}) * 100) ",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -3489,7 +3489,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "$operation by(instance) (dcgm_fi_dev_gpu_temp)",
+          "expr": "$operation by(instance) (dcgm_fi_dev_gpu_temp{cluster=\"$cluster\"})",
           "format": "heatmap",
           "legendFormat": "{{instance}}",
           "range": true,
@@ -3605,7 +3605,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "$operation by(instance) (dcgm_fi_dev_gpu_temp)",
+          "expr": "$operation by(instance) (dcgm_fi_dev_gpu_temp{cluster=\"$cluster\"})",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -3741,7 +3741,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "$operation by(instance) ((dcgm_fi_dev_power_usage / dcgm_fi_dev_power_mgmt_limit) * 100)",
+          "expr": "$operation by(instance) ((dcgm_fi_dev_power_usage{cluster=\"$cluster\"} / dcgm_fi_dev_power_mgmt_limit{cluster=\"$cluster\"}) * 100)",
           "format": "heatmap",
           "legendFormat": "{{instance}}",
           "range": true,
@@ -3863,7 +3863,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "$operation by(instance) ((dcgm_fi_dev_power_usage / dcgm_fi_dev_power_mgmt_limit) * 100)",
+          "expr": "$operation by(instance) ((dcgm_fi_dev_power_usage{cluster=\"$cluster\"} / dcgm_fi_dev_power_mgmt_limit{cluster=\"$cluster\"}) * 100)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -3985,7 +3985,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "$operation by(instance) (dcgm_fi_dev_power_usage)",
+          "expr": "$operation by(instance) (dcgm_fi_dev_power_usage{cluster=\"$cluster\"})",
           "format": "heatmap",
           "legendFormat": "{{instance}}",
           "range": true,
@@ -4101,7 +4101,7 @@
             "uid": "${datasource}"
           },
           "editorMode": "code",
-          "expr": "$operation by(instance) (dcgm_fi_dev_power_usage)",
+          "expr": "$operation by(instance) (dcgm_fi_dev_power_usage{cluster=\"$cluster\"})",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -4148,7 +4148,7 @@
     "list": [
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "prometheus",
           "value": "${datasource}"
         },
@@ -4167,7 +4167,34 @@
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${datasource}"
+        },
+        "definition": "label_values(dcgm_fi_dev_gpu_util, cluster)",
+        "hide": 0,
+        "includeAll": true,
+        "multi": false,
+        "name": "cluster",
+        "options": [],
+        "query": {
+          "qryType": 5,
+          "query": "label_values(dcgm_fi_dev_gpu_util, cluster)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
           "text": "avg",
           "value": "avg"
         },
@@ -4208,6 +4235,6 @@
   "timezone": "",
   "title": "Cluster View (Heat Map & Tables)",
   "uid": "resourcedash",
-  "version": 2,
+  "version": 1,
   "weekStart": ""
 }

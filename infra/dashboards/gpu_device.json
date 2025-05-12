@@ -1234,7 +1234,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "daamw-mscycle"
+            "uid": "${Datasource}"
           },
           "editorMode": "code",
           "expr": "increase(dcgm_fi_dev_ecc_sbe_agg_total{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval])",
@@ -1400,7 +1400,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "daamw-mscycle"
+            "uid": "${Datasource}"
           },
           "editorMode": "code",
           "expr": "increase(dcgm_fi_dev_ecc_dbe_agg_total{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval])",
@@ -1731,7 +1731,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "daamw-mscycle"
+            "uid": "${Datasource}"
           },
           "editorMode": "code",
           "expr": "increase(dcgm_fi_dev_ecc_dbe_vol_total{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval])",
@@ -2556,7 +2556,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "daamw-mscycle"
+            "uid": "${Datasource}"
           },
           "editorMode": "code",
           "expr": "increase(dcgm_fi_dev_nvlink_count_local_link_integrity_errors{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval])",
@@ -2854,7 +2854,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "daamw-mscycle"
+            "uid": "${Datasource}"
           },
           "editorMode": "code",
           "expr": "increase(dcgm_fi_dev_nvlink_count_rx_errors{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval])",
@@ -3020,7 +3020,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "daamw-mscycle"
+            "uid": "${Datasource}"
           },
           "editorMode": "code",
           "expr": "increase(dcgm_fi_dev_nvlink_count_tx_discards{instance=~\"$instance\", gpu=~\"$gpu\"}[$__rate_interval])",
