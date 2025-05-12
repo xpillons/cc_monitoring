@@ -41,10 +41,11 @@ install_prerequisites() {
     chmod 0755 /var/spool/slurm/statesave
 
     # Add to JWT Auth to the slurm.conf
-    # BUG: There is no #Additional config in the slurm.conf
-    # QUESTION: it should use the /sched/ccws/slurm.conf instead of the /sched/slurm.conf as the later is a link to the former
-    lines_to_insert="AuthAltTypes=auth/jwt\nAuthAltParameters=jwt_key=/var/spool/slurm/statesave/jwt_hs256.key\n"
-    sed -i --follow-symlinks '/^Include azure.conf/i '"$lines_to_insert"'' /etc/slurm/slurm.conf
+    # Check if the line already exists
+    if grep -q "AuthAltTypes=auth/jwt" /etc/slurm/slurm.conf; then
+        lines_to_insert="AuthAltTypes=auth/jwt\nAuthAltParameters=jwt_key=/var/spool/slurm/statesave/jwt_hs256.key\n"
+        sed -i --follow-symlinks '/^Include azure.conf/a '"$lines_to_insert"'' /etc/slurm/slurm.conf
+    fi
 
     # Create an unprivileged user for slurmrestd
     if id "slurmrestd" &>/dev/null; then
