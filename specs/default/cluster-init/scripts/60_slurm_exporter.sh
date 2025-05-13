@@ -98,7 +98,7 @@ install_slurm_exporter() {
     unset SLURM_JWT
     export $(scontrol token username="slurmrestd" lifespan=infinite)
 
-    docker run -v /var:/var -e SLURM_JWT=${SLURM_JWT} -d --rm -p 127.0.0.1:${SLURM_EXPORTER_PORT}:8080 --add-host=host.docker.internal:host-gateway \
+    docker run -v /var:/var -e SLURM_JWT=${SLURM_JWT} -d --rm -p ${SLURM_EXPORTER_PORT}:8080 --add-host=host.docker.internal:host-gateway \
             slinky.slurm.net/slurm-exporter:0.3.0 -server http://host.docker.internal:6820 -per-user-metrics true -metrics-bind-address ":${SLURM_EXPORTER_PORT}"
 }
 
