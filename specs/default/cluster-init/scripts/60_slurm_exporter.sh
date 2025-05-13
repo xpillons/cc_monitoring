@@ -93,13 +93,26 @@ install_slurm_exporter() {
     make docker-build
     popd
 
-    
+    IMAGE_NAME="slinky.slurm.net/slurm-exporter:0.3.0"
     # Run Slurm Exporter in a container
     unset SLURM_JWT
     export $(scontrol token username="slurmrestd" lifespan=infinite)
+    # Check if the token is set
+    if [ -z "$SLURM_JWT" ]; then
+        echo "Failed to get SLURM_JWT token"
+        exit 1
+    fi
 
     docker run -v /var:/var -e SLURM_JWT=${SLURM_JWT} -d --rm -p ${SLURM_EXPORTER_PORT}:8080 --add-host=host.docker.internal:host-gateway \
-            slinky.slurm.net/slurm-exporter:0.3.0 -server http://host.docker.internal:6820 -per-user-metrics true -metrics-bind-address ":${SLURM_EXPORTER_PORT}"
+            $IMAGE_NAME -server http://host.docker.internal:6820 -per-user-metrics true -metrics-bind-address ":${SLURM_EXPORTER_PORT}"
+    
+    # Check if the container is running
+    if [ "$(docker ps -q -f ancestor=$IMAGE_NAME)" ]; then
+        echo "Slurm Exporter is running"
+    else
+        echo "Slurm Exporter is not running"
+        exit 1
+    fi
 }
 
 function add_scraper() {
