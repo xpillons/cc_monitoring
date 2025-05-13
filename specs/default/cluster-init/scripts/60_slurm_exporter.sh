@@ -95,15 +95,9 @@ install_slurm_exporter() {
 
     
     # Run Slurm Exporter in a container
-    unset SLURM_JWT; export $(scontrol token username="slurmrestd" lifespan=infinite)
-    # The following command run sucessfully
-    # go run ./cmd/main.go -server http://localhost:6820 -metrics-bind-address ":9080" -per-user-metrics true
-    # Added options to specify the local slurmrestd socket and per user metrics
-    # public image is ghcr.io/slinkyproject/slurm-exporter:0.2.1
-    # Running this doesn't work. 
-    # tried this to map localhost inside the container without success. Log Level is not taken into account, starts freeze at Starting exporter
-    # docker run -v /var:/var -e SLURM_JWT=${SLURM_JWT} --rm -p 127.0.0.1:9080:8080 --add-host=host.docker.internal:host-gateway \
-    #           slinky.slurm.net/slurm-exporter:0.3.0 -server http://host.docker.internal:6820 -per-user-metrics true --zap-log-level=5
+    unset SLURM_JWT
+    export $(scontrol token username="slurmrestd" lifespan=infinite)
+
     docker run -v /var:/var -e SLURM_JWT=${SLURM_JWT} -d --rm -p 127.0.0.1:${SLURM_EXPORTER_PORT}:8080 --add-host=host.docker.internal:host-gateway \
             slinky.slurm.net/slurm-exporter:0.3.0 -server http://host.docker.internal:6820 -per-user-metrics true -metrics-bind-address ":${SLURM_EXPORTER_PORT}"
 }
