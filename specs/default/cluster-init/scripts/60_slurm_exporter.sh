@@ -45,10 +45,6 @@ install_prerequisites() {
     if ! grep -q "AuthAltTypes=auth/jwt" /etc/slurm/slurm.conf; then
         lines_to_insert="AuthAltTypes=auth/jwt\nAuthAltParameters=jwt_key=/var/spool/slurm/statesave/jwt_hs256.key\n"
         sed -i --follow-symlinks '/^Include azure.conf/a '"$lines_to_insert"'' /etc/slurm/slurm.conf
-
-        # Restart slurmctld
-        systemctl restart munge
-        systemctl restart slurmctld.service
     fi
 
     # Create an unprivileged user for slurmrestd
@@ -104,8 +100,17 @@ install_slurm_exporter() {
     export $(scontrol token username="slurmrestd" lifespan=infinite)
     # Check if the token is set
     if [ -z "$SLURM_JWT" ]; then
-        echo "Failed to get SLURM_JWT token"
-        exit 1
+        echo "Failed to get SLURM_JWT token - restarting slurmctld and munge"
+        # Restart slurmctld
+        systemctl restart munge
+        systemctl restart slurmctld.service
+
+        unset SLURM_JWT
+        export $(scontrol token username="slurmrestd" lifespan=infinite)
+        if [ -z "$SLURM_JWT" ]; then
+            echo "Failed to get SLURM_JWT token after restarting slurmctld and munge"
+            exit 1
+        fi
     fi
 
     docker run -v /var:/var -e SLURM_JWT=${SLURM_JWT} -d --rm -p ${SLURM_EXPORTER_PORT}:8080 --add-host=host.docker.internal:host-gateway \
