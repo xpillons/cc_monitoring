@@ -105,8 +105,8 @@ install_slurm_exporter() {
     # tried this to map localhost inside the container without success. Log Level is not taken into account, starts freeze at Starting exporter
     # docker run -v /var:/var -e SLURM_JWT=${SLURM_JWT} --rm -p 127.0.0.1:9080:8080 --add-host=host.docker.internal:host-gateway \
     #           slinky.slurm.net/slurm-exporter:0.3.0 -server http://host.docker.internal:6820 -per-user-metrics true --zap-log-level=5
-    docker run -v /var:/var -e SLURM_JWT=${SLURM_JWT} -d --rm -p 127.0.0.1:${SLURM_EXPORTER_PORT}:8080 --add-host=host.docker.internal:host-gateway \ 
-           slinky.slurm.net/slurm-exporter:0.3.0 -server http://host.docker.internal:6820 -per-user-metrics true -metrics-bind-address ":${SLURM_EXPORTER_PORT}"
+    docker run -v /var:/var -e SLURM_JWT=${SLURM_JWT} -d --rm -p 127.0.0.1:${SLURM_EXPORTER_PORT}:8080 --add-host=host.docker.internal:host-gateway \
+            slinky.slurm.net/slurm-exporter:0.3.0 -server http://host.docker.internal:6820 -per-user-metrics true -metrics-bind-address ":${SLURM_EXPORTER_PORT}"
 }
 
 function add_scraper() {
