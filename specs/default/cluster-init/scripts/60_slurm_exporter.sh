@@ -45,6 +45,10 @@ install_prerequisites() {
     if ! grep -q "AuthAltTypes=auth/jwt" /etc/slurm/slurm.conf; then
         lines_to_insert="AuthAltTypes=auth/jwt\nAuthAltParameters=jwt_key=/var/spool/slurm/statesave/jwt_hs256.key\n"
         sed -i --follow-symlinks '/^Include azure.conf/a '"$lines_to_insert"'' /etc/slurm/slurm.conf
+
+        # Restart slurmctld
+        systemctl restart munge
+        systemctl restart slurmctld.service
     fi
 
     # Create an unprivileged user for slurmrestd
@@ -93,6 +97,7 @@ install_slurm_exporter() {
     make docker-build
     popd
 
+    # Question: How to know the image name? What if the version changed in the future?
     IMAGE_NAME="slinky.slurm.net/slurm-exporter:0.3.0"
     # Run Slurm Exporter in a container
     unset SLURM_JWT
