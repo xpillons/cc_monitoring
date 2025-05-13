@@ -18,7 +18,6 @@ if ! is_scheduler ; then
     exit 0
 fi
 
-exit 0
 echo "Installing Slurm Exporter..."
 
 install_prerequisites() {
