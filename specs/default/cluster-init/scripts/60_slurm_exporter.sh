@@ -112,6 +112,12 @@ install_slurm_exporter() {
         fi
     fi
 
+    # Check if the container is already running, and if so, stop it
+    if [ "$(docker ps -q -f ancestor=$IMAGE_NAME)" ]; then
+        echo "Slurm Exporter is already running, stopping it..."
+        docker stop $(docker ps -q -f ancestor=$IMAGE_NAME)
+    fi
+
     docker run -v /var:/var -e SLURM_JWT=${SLURM_JWT} -d --rm -p ${SLURM_EXPORTER_PORT}:8080 --add-host=host.docker.internal:host-gateway \
             $IMAGE_NAME -server http://host.docker.internal:6820 -per-user-metrics true -metrics-bind-address ":${SLURM_EXPORTER_PORT}"
     
