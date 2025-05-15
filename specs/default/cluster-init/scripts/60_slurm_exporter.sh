@@ -102,7 +102,7 @@ install_slurm_exporter() {
     if [ -z "$SLURM_JWT" ]; then
         echo "Failed to get SLURM_JWT token - restarting slurm"
         # Restart slurmctld
-        /opt/cycle/jetpack/system/bootstrap/azure-slurm-install/start-services scheduler
+        /opt/cycle/jetpack/system/bootstrap/azure-slurm-install/start-services.sh scheduler
 
         unset SLURM_JWT
         export $(scontrol token username="slurmrestd" lifespan=infinite)
