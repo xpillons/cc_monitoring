@@ -1089,18 +1089,9 @@
                 "value": {
                   "type": "color-text"
                 }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "GPU Utilization"
-            },
-            "properties": [
+              },
               {
-                "id": "custom.width",
-                "value": 300
+                "id": "custom.width"
               }
             ]
           }
@@ -1138,8 +1129,8 @@
           "expr": "$operation by(instance) (dcgm_fi_dev_gpu_util{cluster=\"$cluster\"})",
           "format": "table",
           "hide": false,
-          "instant": true,
-          "range": false,
+          "instant": false,
+          "range": true,
           "refId": "A"
         }
       ],
@@ -1149,7 +1140,7 @@
           "id": "organize",
           "options": {
             "excludeByName": {
-              "Time": true
+              "Time": false
             },
             "includeByName": {},
             "indexByName": {},
@@ -1319,10 +1310,6 @@
             },
             "properties": [
               {
-                "id": "custom.width",
-                "value": 150
-              },
-              {
                 "id": "color",
                 "value": {
                   "mode": "thresholds"
@@ -1333,18 +1320,9 @@
                 "value": {
                   "type": "color-text"
                 }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "CPU Utilization"
-            },
-            "properties": [
+              },
               {
-                "id": "custom.width",
-                "value": 300
+                "id": "custom.width"
               }
             ]
           }
@@ -1356,7 +1334,7 @@
         "x": 12,
         "y": 46
       },
-      "id": 38,
+      "id": 44,
       "options": {
         "cellHeight": "md",
         "footer": {
@@ -1382,8 +1360,8 @@
           "expr": "${operation} by(instance) (100 * (1 - ${operation} by(instance, cpu) (rate(node_cpu_seconds_total{mode=\"idle\", cluster=\"$cluster\"}[$__rate_interval]))))",
           "format": "table",
           "hide": false,
-          "instant": true,
-          "range": false,
+          "instant": false,
+          "range": true,
           "refId": "A"
         }
       ],
@@ -1393,7 +1371,7 @@
           "id": "organize",
           "options": {
             "excludeByName": {
-              "Time": true
+              "Time": false
             },
             "includeByName": {},
             "indexByName": {},
@@ -1580,7 +1558,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Node Memory Utilization"
+              "options": "Memory Copy Utilization"
             },
             "properties": [
               {
@@ -1594,18 +1572,9 @@
                 "value": {
                   "type": "color-text"
                 }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Node Memory Utilization"
-            },
-            "properties": [
+              },
               {
-                "id": "custom.width",
-                "value": 300
+                "id": "custom.width"
               }
             ]
           }
@@ -1648,8 +1617,8 @@
           "expr": "$operation by(instance) (dcgm_fi_dev_mem_copy_util{cluster=\"$cluster\"})",
           "format": "table",
           "hide": false,
-          "instant": true,
-          "range": false,
+          "instant": false,
+          "range": true,
           "refId": "A"
         }
       ],
@@ -1659,7 +1628,7 @@
           "id": "organize",
           "options": {
             "excludeByName": {
-              "Time": true
+              "Time": false
             },
             "includeByName": {},
             "indexByName": {},
@@ -1829,8 +1798,7 @@
             },
             "properties": [
               {
-                "id": "custom.width",
-                "value": 150
+                "id": "custom.width"
               },
               {
                 "id": "color",
@@ -1843,18 +1811,6 @@
                 "value": {
                   "type": "color-text"
                 }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Node Memory Utilization"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 300
               }
             ]
           }
@@ -1892,8 +1848,8 @@
           "expr": "$operation by(instance) (100 * (1 - (node_memory_MemAvailable_bytes{cluster=\"$cluster\"} / (node_memory_MemTotal_bytes{cluster=\"$cluster\"}))))",
           "format": "table",
           "hide": false,
-          "instant": true,
-          "range": false,
+          "instant": false,
+          "range": true,
           "refId": "A"
         }
       ],
@@ -1903,7 +1859,7 @@
           "id": "organize",
           "options": {
             "excludeByName": {
-              "Time": true
+              "Time": false
             },
             "includeByName": {},
             "indexByName": {},
@@ -2073,8 +2029,7 @@
             },
             "properties": [
               {
-                "id": "custom.width",
-                "value": 150
+                "id": "custom.width"
               },
               {
                 "id": "color",
@@ -2087,18 +2042,6 @@
                 "value": {
                   "type": "color-text"
                 }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Disk (I/O) Utilization"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 300
               }
             ]
           }
@@ -2136,8 +2079,8 @@
           "expr": "${operation} by(instance) (\r\n  rate(node_disk_io_time_seconds_total{cluster=\"$cluster\"}[$__rate_interval])\r\n)",
           "format": "table",
           "hide": false,
-          "instant": true,
-          "range": false,
+          "instant": false,
+          "range": true,
           "refId": "A"
         }
       ],
@@ -2147,7 +2090,7 @@
           "id": "organize",
           "options": {
             "excludeByName": {
-              "Time": true
+              "Time": false
             },
             "includeByName": {},
             "indexByName": {},
@@ -2165,6 +2108,522 @@
               {
                 "desc": true,
                 "field": "Disk (I/O) Utilization"
+              }
+            ]
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 86
+      },
+      "id": 42,
+      "panels": [],
+      "title": "Saturation",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "default": false,
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Node Load (Load1 / Core Count) Heatmap (${operation})",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "scaleDistribution": {
+              "type": "linear"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 87
+      },
+      "id": 43,
+      "options": {
+        "calculate": true,
+        "calculation": {
+          "xBuckets": {
+            "mode": "size",
+            "value": "10"
+          },
+          "yBuckets": {
+            "mode": "count",
+            "value": "10"
+          }
+        },
+        "cellGap": 1,
+        "color": {
+          "exponent": 0.5,
+          "fill": "dark-orange",
+          "mode": "scheme",
+          "reverse": true,
+          "scale": "exponential",
+          "scheme": "Blues",
+          "steps": 64
+        },
+        "exemplars": {
+          "color": "rgba(255,0,255,0.7)"
+        },
+        "filterValues": {
+          "le": 1e-9
+        },
+        "legend": {
+          "show": true
+        },
+        "rowsFrame": {
+          "layout": "auto"
+        },
+        "tooltip": {
+          "mode": "single",
+          "showColorScale": false,
+          "yHistogram": false
+        },
+        "yAxis": {
+          "axisPlacement": "left",
+          "decimals": 0,
+          "reverse": false,
+          "unit": ""
+        }
+      },
+      "pluginVersion": "11.2.8+security-01",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "${operation} by(instance) (node_load1{cluster=\"$cluster\"}) / on(instance) count by (instance) (group by (instance, cpu) (node_cpu_seconds_total{cluster=\"$cluster\"}))",
+          "format": "heatmap",
+          "legendFormat": "{{instance}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Node Load (Load1 / Core Count) Heatmap (${operation})",
+      "type": "heatmap"
+    },
+    {
+      "datasource": {
+        "default": false,
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Node Load (Load1 / Core Count) by Instance",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "blue",
+                "value": 0.25
+              },
+              {
+                "color": "yellow",
+                "value": 0.5
+              },
+              {
+                "color": "red",
+                "value": 0.75
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Normalized CPU Load (Load1 / Core Count)"
+            },
+            "properties": [
+              {
+                "id": "custom.width"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "thresholds"
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Normalized CPU Load (Load1 / Core Count)"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 300
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 87
+      },
+      "id": 46,
+      "options": {
+        "cellHeight": "md",
+        "footer": {
+          "countRows": false,
+          "enablePagination": true,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "11.2.8+security-01",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "${operation} by(instance)(node_load1{cluster=\"$cluster\"}) / on(instance) count by (instance) (group by (instance, cpu) (node_cpu_seconds_total{cluster=\"$cluster\"}))",
+          "format": "table",
+          "hide": false,
+          "instant": false,
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Node Load (Load1 / Core Count) by Instance (${operation})",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": false
+            },
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Value": "Normalized CPU Load (Load1 / Core Count)",
+              "instance": "Instance"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Status",
+            "binary": {
+              "left": "CPU Utilization",
+              "operator": "<",
+              "reducer": "sum",
+              "right": "50"
+            },
+            "formula": "$CPU Utilization < 50 ? \"Normal (0-50%)\" : ($CPU Utilization < 75 ? \"Warning (50-75%)\" : \"Critical (75%+)\")",
+            "mode": "binary",
+            "reduce": {
+              "include": [
+                "CPU Utilization"
+              ],
+              "reducer": "sum"
+            },
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "desc": true,
+                "field": "Normalized CPU Load (Load1 / Core Count)"
+              }
+            ]
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "default": false,
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Memory Major Page Faults Heatmap (${operation})",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "scaleDistribution": {
+              "type": "linear"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 97
+      },
+      "id": 45,
+      "options": {
+        "calculate": true,
+        "calculation": {
+          "xBuckets": {
+            "mode": "size",
+            "value": "10"
+          },
+          "yBuckets": {
+            "mode": "count",
+            "value": "10"
+          }
+        },
+        "cellGap": 1,
+        "color": {
+          "exponent": 0.5,
+          "fill": "dark-orange",
+          "mode": "scheme",
+          "reverse": true,
+          "scale": "exponential",
+          "scheme": "Blues",
+          "steps": 64
+        },
+        "exemplars": {
+          "color": "rgba(255,0,255,0.7)"
+        },
+        "filterValues": {
+          "le": 1e-9
+        },
+        "legend": {
+          "show": true
+        },
+        "rowsFrame": {
+          "layout": "auto"
+        },
+        "tooltip": {
+          "mode": "single",
+          "showColorScale": false,
+          "yHistogram": false
+        },
+        "yAxis": {
+          "axisLabel": "Faults",
+          "axisPlacement": "left",
+          "decimals": 0,
+          "reverse": false,
+          "unit": ""
+        }
+      },
+      "pluginVersion": "11.2.8+security-01",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "${operation} by(instance) (\r\n  rate(node_vmstat_pgmajfault{cluster=\"$cluster\"}[$__rate_interval])\r\n)",
+          "format": "heatmap",
+          "legendFormat": "{{instance}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Memory Major Page Faults Heatmap (${operation})",
+      "type": "heatmap"
+    },
+    {
+      "datasource": {
+        "default": false,
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Memory Major Page Faults by Instance",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "blue",
+                "value": 25
+              },
+              {
+                "color": "yellow",
+                "value": 50
+              },
+              {
+                "color": "red",
+                "value": 75
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Memory Major Page Faults"
+            },
+            "properties": [
+              {
+                "id": "custom.width"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 97
+      },
+      "id": 38,
+      "options": {
+        "cellHeight": "md",
+        "footer": {
+          "countRows": false,
+          "enablePagination": true,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "11.2.8+security-01",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "${operation} by(instance) (\r\n  rate(node_vmstat_pgmajfault{cluster=\"$cluster\"}[$__rate_interval])\r\n)",
+          "format": "table",
+          "hide": false,
+          "instant": false,
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Memory Major Page Faults by Instance (${operation})",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": false
+            },
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Value": "Memory Major Page Faults",
+              "instance": "Instance"
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Status",
+            "binary": {
+              "left": "CPU Utilization",
+              "operator": "<",
+              "reducer": "sum",
+              "right": "50"
+            },
+            "formula": "$CPU Utilization < 50 ? \"Normal (0-50%)\" : ($CPU Utilization < 75 ? \"Warning (50-75%)\" : \"Critical (75%+)\")",
+            "mode": "binary",
+            "reduce": {
+              "include": [
+                "CPU Utilization"
+              ],
+              "reducer": "sum"
+            },
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "desc": true,
+                "field": "Memory Major Page Faults"
               }
             ]
           }
@@ -2198,7 +2657,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 86
+        "y": 107
       },
       "id": 40,
       "options": {
@@ -2313,36 +2772,11 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Disk (I/O) Utilization"
+              "options": "NFS I/O Operations"
             },
             "properties": [
               {
-                "id": "custom.width",
-                "value": 150
-              },
-              {
-                "id": "color",
-                "value": {
-                  "mode": "thresholds"
-                }
-              },
-              {
-                "id": "custom.cellOptions",
-                "value": {
-                  "type": "color-text"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Disk (I/O) Utilization"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 300
+                "id": "custom.width"
               }
             ]
           }
@@ -2352,7 +2786,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 86
+        "y": 107
       },
       "id": 41,
       "options": {
@@ -2385,8 +2819,8 @@
           "expr": "${operation} by(instance) (\r\n  rate(node_mountstats_nfs_operations_request_time_seconds_total{operation=~\"READ|WRITE\", cluster=\"$cluster\"}[$__rate_interval])\r\n)",
           "format": "table",
           "hide": false,
-          "instant": true,
-          "range": false,
+          "instant": false,
+          "range": true,
           "refId": "A"
         }
       ],
@@ -2396,7 +2830,7 @@
           "id": "organize",
           "options": {
             "excludeByName": {
-              "Time": true
+              "Time": false
             },
             "includeByName": {},
             "indexByName": {},
@@ -2427,7 +2861,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 96
+        "y": 117
       },
       "id": 12,
       "panels": [],
@@ -2460,7 +2894,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 97
+        "y": 118
       },
       "id": 5,
       "options": {
@@ -2575,30 +3009,11 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "CPU Utilization"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 150
-              },
-              {
-                "id": "color",
-                "value": {
-                  "mode": "thresholds"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
               "options": "Frequency"
             },
             "properties": [
               {
-                "id": "custom.width",
-                "value": 300
+                "id": "custom.width"
               }
             ]
           }
@@ -2608,7 +3023,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 97
+        "y": 118
       },
       "id": 22,
       "options": {
@@ -2636,8 +3051,8 @@
           "expr": "$operation by(instance) (dcgm_fi_dev_sm_clock{cluster=\"$cluster\"})",
           "format": "table",
           "hide": false,
-          "instant": true,
-          "range": false,
+          "instant": false,
+          "range": true,
           "refId": "A"
         }
       ],
@@ -2647,7 +3062,7 @@
           "id": "organize",
           "options": {
             "excludeByName": {
-              "Time": true
+              "Time": false
             },
             "includeByName": {},
             "indexByName": {},
@@ -2698,7 +3113,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 107
+        "y": 128
       },
       "id": 25,
       "options": {
@@ -2813,30 +3228,11 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "CPU Utilization"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 150
-              },
-              {
-                "id": "color",
-                "value": {
-                  "mode": "thresholds"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
               "options": "Frequency"
             },
             "properties": [
               {
-                "id": "custom.width",
-                "value": 300
+                "id": "custom.width"
               }
             ]
           }
@@ -2846,7 +3242,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 107
+        "y": 128
       },
       "id": 26,
       "options": {
@@ -2874,8 +3270,8 @@
           "expr": "$operation by(instance) (dcgm_fi_dev_mem_clock{cluster=\"$cluster\"})",
           "format": "table",
           "hide": false,
-          "instant": true,
-          "range": false,
+          "instant": false,
+          "range": true,
           "refId": "A"
         }
       ],
@@ -2885,7 +3281,7 @@
           "id": "organize",
           "options": {
             "excludeByName": {
-              "Time": true
+              "Time": false
             },
             "includeByName": {},
             "indexByName": {},
@@ -2936,7 +3332,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 117
+        "y": 138
       },
       "id": 23,
       "options": {
@@ -3051,30 +3447,11 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "CPU Utilization"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 150
-              },
-              {
-                "id": "color",
-                "value": {
-                  "mode": "thresholds"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
               "options": "Frequency"
             },
             "properties": [
               {
-                "id": "custom.width",
-                "value": 300
+                "id": "custom.width"
               }
             ]
           }
@@ -3084,7 +3461,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 117
+        "y": 138
       },
       "id": 24,
       "options": {
@@ -3112,8 +3489,8 @@
           "expr": "avg by(instance) (node_cpu_scaling_frequency_hertz{cluster=\"$cluster\"})/ 1000000",
           "format": "table",
           "hide": false,
-          "instant": true,
-          "range": false,
+          "instant": false,
+          "range": true,
           "refId": "A"
         }
       ],
@@ -3123,7 +3500,7 @@
           "id": "organize",
           "options": {
             "excludeByName": {
-              "Time": true
+              "Time": false
             },
             "includeByName": {},
             "indexByName": {},
@@ -3154,7 +3531,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 127
+        "y": 148
       },
       "id": 13,
       "panels": [],
@@ -3187,7 +3564,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 128
+        "y": 149
       },
       "id": 34,
       "options": {
@@ -3307,8 +3684,7 @@
             },
             "properties": [
               {
-                "id": "custom.width",
-                "value": 150
+                "id": "custom.width"
               },
               {
                 "id": "color",
@@ -3323,18 +3699,6 @@
                 }
               }
             ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Utilization (Temp/Max Op Temp)"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 300
-              }
-            ]
           }
         ]
       },
@@ -3342,7 +3706,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 128
+        "y": 149
       },
       "id": 35,
       "options": {
@@ -3370,8 +3734,8 @@
           "expr": "$operation by(instance) ((dcgm_fi_dev_gpu_temp{cluster=\"$cluster\"} / dcgm_fi_dev_gpu_max_op_temp{cluster=\"$cluster\"}) * 100) ",
           "format": "table",
           "hide": false,
-          "instant": true,
-          "range": false,
+          "instant": false,
+          "range": true,
           "refId": "A"
         }
       ],
@@ -3381,7 +3745,7 @@
           "id": "organize",
           "options": {
             "excludeByName": {
-              "Time": true
+              "Time": false
             },
             "includeByName": {},
             "indexByName": {},
@@ -3432,7 +3796,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 138
+        "y": 159
       },
       "id": 18,
       "options": {
@@ -3547,24 +3911,6 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "CPU Utilization"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 150
-              },
-              {
-                "id": "color",
-                "value": {
-                  "mode": "thresholds"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
               "options": "Temperature"
             },
             "properties": [
@@ -3580,7 +3926,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 138
+        "y": 159
       },
       "id": 15,
       "options": {
@@ -3608,8 +3954,8 @@
           "expr": "$operation by(instance) (dcgm_fi_dev_gpu_temp{cluster=\"$cluster\"})",
           "format": "table",
           "hide": false,
-          "instant": true,
-          "range": false,
+          "instant": false,
+          "range": true,
           "refId": "A"
         }
       ],
@@ -3619,7 +3965,7 @@
           "id": "organize",
           "options": {
             "excludeByName": {
-              "Time": true
+              "Time": false
             },
             "includeByName": {},
             "indexByName": {},
@@ -3650,7 +3996,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 148
+        "y": 169
       },
       "id": 14,
       "panels": [],
@@ -3683,7 +4029,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 149
+        "y": 170
       },
       "id": 16,
       "options": {
@@ -3803,8 +4149,7 @@
             },
             "properties": [
               {
-                "id": "custom.width",
-                "value": 150
+                "id": "custom.width"
               },
               {
                 "id": "color",
@@ -3819,18 +4164,6 @@
                 }
               }
             ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Power Utilization (GPU Power Draw/Max Power Limit)"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 300
-              }
-            ]
           }
         ]
       },
@@ -3838,7 +4171,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 149
+        "y": 170
       },
       "id": 17,
       "options": {
@@ -3866,8 +4199,8 @@
           "expr": "$operation by(instance) ((dcgm_fi_dev_power_usage{cluster=\"$cluster\"} / dcgm_fi_dev_power_mgmt_limit{cluster=\"$cluster\"}) * 100)",
           "format": "table",
           "hide": false,
-          "instant": true,
-          "range": false,
+          "instant": false,
+          "range": true,
           "refId": "A"
         }
       ],
@@ -3877,7 +4210,7 @@
           "id": "organize",
           "options": {
             "excludeByName": {
-              "Time": true
+              "Time": false
             },
             "includeByName": {},
             "indexByName": {},
@@ -3928,7 +4261,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 159
+        "y": 180
       },
       "id": 36,
       "options": {
@@ -4043,30 +4376,11 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "CPU Utilization"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 150
-              },
-              {
-                "id": "color",
-                "value": {
-                  "mode": "thresholds"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
               "options": "Power"
             },
             "properties": [
               {
-                "id": "custom.width",
-                "value": 300
+                "id": "custom.width"
               }
             ]
           }
@@ -4076,7 +4390,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 159
+        "y": 180
       },
       "id": 37,
       "options": {
@@ -4104,8 +4418,8 @@
           "expr": "$operation by(instance) (dcgm_fi_dev_power_usage{cluster=\"$cluster\"})",
           "format": "table",
           "hide": false,
-          "instant": true,
-          "range": false,
+          "instant": false,
+          "range": true,
           "refId": "A"
         }
       ],
@@ -4115,7 +4429,7 @@
           "id": "organize",
           "options": {
             "excludeByName": {
-              "Time": true
+              "Time": false
             },
             "includeByName": {},
             "indexByName": {},
@@ -4148,7 +4462,7 @@
     "list": [
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "prometheus",
           "value": "${datasource}"
         },
@@ -4168,8 +4482,8 @@
       {
         "current": {
           "selected": true,
-          "text": "All",
-          "value": "$__all"
+          "text": "ccw_05051453/ccw",
+          "value": "ccw_05051453/ccw"
         },
         "datasource": {
           "type": "prometheus",
@@ -4235,6 +4549,6 @@
   "timezone": "",
   "title": "Cluster View (Heat Map & Tables)",
   "uid": "resourcedash",
-  "version": 1,
+  "version": 6,
   "weekStart": ""
 }
