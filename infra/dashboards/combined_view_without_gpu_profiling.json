@@ -6240,7 +6240,7 @@
           "type": "prometheus",
           "uid": "${Datasource}"
         },
-        "definition": "node_uname_info{cluster=\"$cluster\"}",
+        "definition": "label_values(node_uname_info{cluster=\"$cluster\"},instance)",
         "hide": 0,
         "includeAll": false,
         "label": "Hostname",
@@ -6249,11 +6249,11 @@
         "options": [],
         "query": {
           "qryType": 4,
-          "query": "node_uname_info{cluster=\"$cluster\"}",
+          "query": "label_values(node_uname_info{cluster=\"$cluster\"},instance)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
-        "regex": "/.*nodename=\"([^\"]*).*/",
+        "regex": "",
         "skipUrlSync": false,
         "sort": 1,
         "tagValuesQuery": "",
