@@ -49,7 +49,7 @@
         "type": "prometheus",
         "uid": "${Datasource}"
       },
-      "description": "Load average by node",
+      "description": "Normalized CPU Load (Load1 / Core Count) ($Operation)\n",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -123,7 +123,7 @@
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -135,39 +135,13 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(avg by(instance) (node_load1{cluster=\"$Cluster\"})) * ($Operation== bool 1) + (min by(instance) (node_load1{cluster=\"$Cluster\"})) * ($Operation== bool 2) + (max by(instance) (node_load1{cluster=\"$Cluster\"})) * ($Operation== bool 3)",
+          "expr": "(avg by(instance) (node_load1{cluster=\"$cluster\"}) / on(instance) count by (instance) (group by (instance, cpu) (node_cpu_seconds_total{cluster=\"$cluster\"}))) * ($Operation== bool 1) + (min by(instance) (node_load1{cluster=\"$cluster\"}) / on(instance) count by (instance) (group by (instance, cpu) (node_cpu_seconds_total{cluster=\"$cluster\"}))) * ($Operation== bool 2) + (max by(instance) (node_load1{cluster=\"$cluster\"}) / on(instance) count by (instance) (group by (instance, cpu) (node_cpu_seconds_total{cluster=\"$cluster\"}))) * ($Operation== bool 3)",
           "legendFormat": "{{instance}} - 1m",
           "range": true,
           "refId": "A"
-        },
-        {
-          "datasource": {
-            "default": false,
-            "type": "prometheus",
-            "uid": "${Datasource}"
-          },
-          "editorMode": "code",
-          "expr": "(avg by(instance) (node_load5{cluster=\"$Cluster\"})) * ($Operation== bool 1) + (min by(instance) (node_load5{cluster=\"$Cluster\"})) * ($Operation== bool 2) + (max by(instance) (node_load5{cluster=\"$Cluster\"})) * ($Operation== bool 3)",
-          "hide": false,
-          "legendFormat": "{{instance}} - 5m",
-          "range": true,
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "default": false,
-            "type": "prometheus",
-            "uid": "${Datasource}"
-          },
-          "editorMode": "code",
-          "expr": "(avg by(instance) (node_load15{cluster=\"$Cluster\"})) * ($Operation== bool 1) + (min by(instance) (node_load15{cluster=\"$Cluster\"})) * ($Operation== bool 2) + (max by(instance) (node_load15{cluster=\"$Cluster\"})) * ($Operation== bool 3)",
-          "hide": false,
-          "legendFormat": "{{instance}} - 15m",
-          "range": true,
-          "refId": "C"
         }
       ],
-      "title": "Load",
+      "title": "Node Load (Load1 / Core Count) ($Operation)",
       "type": "timeseries"
     },
     {
@@ -257,7 +231,7 @@
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -269,13 +243,13 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(avg by(instance) (100 - ((node_filesystem_avail_bytes{mountpoint=\"/\",fstype!=\"rootfs\", cluster=\"$Cluster\"} * 100) / node_filesystem_size_bytes{mountpoint=\"/\",fstype!=\"rootfs\", cluster=\"$Cluster\"}))) * ($Operation== bool 1) + (min by(instance) (100 - ((node_filesystem_avail_bytes{mountpoint=\"/\",fstype!=\"rootfs\", cluster=\"$Cluster\"} * 100) / node_filesystem_size_bytes{mountpoint=\"/\",fstype!=\"rootfs\", cluster=\"$Cluster\"}))) * ($Operation== bool 2) + (max by(instance) (100 - ((node_filesystem_avail_bytes{mountpoint=\"/\",fstype!=\"rootfs\", cluster=\"$Cluster\"} * 100) / node_filesystem_size_bytes{mountpoint=\"/\",fstype!=\"rootfs\", cluster=\"$Cluster\"}))) * ($Operation== bool 3)",
+          "expr": "(avg by(instance) (100 - ((node_filesystem_avail_bytes{mountpoint=\"/\",fstype!=\"rootfs\", cluster=\"$cluster\"} * 100) / node_filesystem_size_bytes{mountpoint=\"/\",fstype!=\"rootfs\", cluster=\"$cluster\"}))) * ($Operation== bool 1) + (min by(instance) (100 - ((node_filesystem_avail_bytes{mountpoint=\"/\",fstype!=\"rootfs\", cluster=\"$cluster\"} * 100) / node_filesystem_size_bytes{mountpoint=\"/\",fstype!=\"rootfs\", cluster=\"$cluster\"}))) * ($Operation== bool 2) + (max by(instance) (100 - ((node_filesystem_avail_bytes{mountpoint=\"/\",fstype!=\"rootfs\", cluster=\"$cluster\"} * 100) / node_filesystem_size_bytes{mountpoint=\"/\",fstype!=\"rootfs\", cluster=\"$cluster\"}))) * ($Operation== bool 3)",
           "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Filesystem Usage",
+      "title": "Filesystem Usage ($Operation)",
       "type": "timeseries"
     },
     {
@@ -357,7 +331,7 @@
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -369,13 +343,13 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(avg by(instance) (100 * (1 - avg by(instance, cpu) (rate(node_cpu_seconds_total{mode=\"idle\", cluster=\"$Cluster\"}[$__rate_interval])))))  *  ($Operation== bool 1)  + (min by(instance) (100 * (1 - avg by(instance, cpu) (rate(node_cpu_seconds_total{mode=\"idle\", cluster=\"$Cluster\"}[$__rate_interval])))))  *  ($Operation== bool 2)  + (max by(instance) (100 * (1 - avg by(instance, cpu) (rate(node_cpu_seconds_total{mode=\"idle\", cluster=\"$Cluster\"}[$__rate_interval])))))  *  ($Operation== bool 3)",
+          "expr": "(avg by(instance) (100 * (1 - avg by(instance, cpu) (rate(node_cpu_seconds_total{mode=\"idle\", cluster=\"$cluster\"}[$__rate_interval])))))  *  ($Operation== bool 1)  + (min by(instance) (100 * (1 - avg by(instance, cpu) (rate(node_cpu_seconds_total{mode=\"idle\", cluster=\"$cluster\"}[$__rate_interval])))))  *  ($Operation== bool 2)  + (max by(instance) (100 * (1 - avg by(instance, cpu) (rate(node_cpu_seconds_total{mode=\"idle\", cluster=\"$cluster\"}[$__rate_interval])))))  *  ($Operation== bool 3)",
           "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "CPU Utilization",
+      "title": "CPU Utilization ($Operation)",
       "type": "timeseries"
     },
     {
@@ -456,7 +430,7 @@
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -468,13 +442,13 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(avg by(instance) (node_cpu_scaling_frequency_hertz{cluster=\"$Cluster\"})/ 1000000)  *  ($Operation== bool 1)  + (min by(instance) (node_cpu_scaling_frequency_hertz{cluster=\"$Cluster\"})/ 1000000)  *  ($Operation== bool 2)  + (max by(instance) (node_cpu_scaling_frequency_hertz{cluster=\"$Cluster\"})/ 1000000)  *  ($Operation== bool 3)",
+          "expr": "(avg by(instance) (node_cpu_scaling_frequency_hertz{cluster=\"$cluster\"})/ 1000000)  *  ($Operation== bool 1)  + (min by(instance) (node_cpu_scaling_frequency_hertz{cluster=\"$cluster\"})/ 1000000)  *  ($Operation== bool 2)  + (max by(instance) (node_cpu_scaling_frequency_hertz{cluster=\"$cluster\"})/ 1000000)  *  ($Operation== bool 3)",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "CPU Clock",
+      "title": "CPU Clock ($Operation)",
       "type": "timeseries"
     },
     {
@@ -556,7 +530,7 @@
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -568,13 +542,13 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(avg by(instance) (100 * (1 - (node_memory_MemAvailable_bytes{cluster=\"$Cluster\"} / node_memory_MemTotal_bytes{cluster=\"$Cluster\"})))) * ($Operation== bool 1) + (min by(instance) (100 * (1 - (node_memory_MemAvailable_bytes{cluster=\"$Cluster\"} / node_memory_MemTotal_bytes{cluster=\"$Cluster\"})))) * ($Operation== bool 2) + (max by(instance) (100 * (1 - (node_memory_MemAvailable_bytes{cluster=\"$Cluster\"} / node_memory_MemTotal_bytes{cluster=\"$Cluster\"})))) * ($Operation== bool 3)",
+          "expr": "(avg by(instance) (100 * (1 - (node_memory_MemAvailable_bytes{cluster=\"$cluster\"} / node_memory_MemTotal_bytes{cluster=\"$cluster\"})))) * ($Operation== bool 1) + (min by(instance) (100 * (1 - (node_memory_MemAvailable_bytes{cluster=\"$cluster\"} / node_memory_MemTotal_bytes{cluster=\"$cluster\"})))) * ($Operation== bool 2) + (max by(instance) (100 * (1 - (node_memory_MemAvailable_bytes{cluster=\"$cluster\"} / node_memory_MemTotal_bytes{cluster=\"$cluster\"})))) * ($Operation== bool 3)",
           "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Memory Utilization",
+      "title": "Memory Utilization ($Operation)",
       "type": "timeseries"
     },
     {
@@ -583,7 +557,7 @@
         "type": "prometheus",
         "uid": "${Datasource}"
       },
-      "description": "RX/TX rate of VM's Ethernet Interface by Node",
+      "description": "Memory Major Page Faults ($Operation)\n",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -593,7 +567,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "bytes out (-) / in (+)",
+            "axisLabel": "Faults",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
@@ -629,25 +603,15 @@
               {
                 "color": "green",
                 "value": null
-              }
-            ]
-          },
-          "unit": "Bps"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/.*trans.*/"
-            },
-            "properties": [
+              },
               {
-                "id": "custom.transform",
-                "value": "negative-Y"
+                "color": "red",
+                "value": 80
               }
             ]
           }
-        ]
+        },
+        "overrides": []
       },
       "gridPos": {
         "h": 8,
@@ -655,7 +619,7 @@
         "x": 12,
         "y": 17
       },
-      "id": 223,
+      "id": 228,
       "options": {
         "legend": {
           "calcs": [
@@ -667,7 +631,7 @@
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -679,26 +643,13 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(sum by(instance) (rate(node_network_receive_bytes_total{device='eth0', cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (rate(node_network_receive_bytes_total{device='eth0', cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (rate(node_network_receive_bytes_total{device='eth0', cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
-          "legendFormat": "{{instance}} - receive",
+          "expr": "(avg by(instance) (rate(node_vmstat_pgmajfault{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (rate(node_vmstat_pgmajfault{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (rate(node_vmstat_pgmajfault{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
+          "legendFormat": "{{instance}} ",
           "range": true,
           "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${Datasource}"
-          },
-          "editorMode": "code",
-          "expr": "(sum by(instance) (rate(node_network_transmit_bytes_total{device='eth0',cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (rate(node_network_transmit_bytes_total{device='eth0',cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (rate(node_network_transmit_bytes_total{device='eth0',cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "{{instance}} - transmit",
-          "range": true,
-          "refId": "B"
         }
       ],
-      "title": "Ethernet Throughput (RX/TX)",
+      "title": "Memory Major Page Faults ($Operation)",
       "type": "timeseries"
     },
     {
@@ -778,7 +729,7 @@
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -790,13 +741,13 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(avg by(instance) (node_memory_memavailable_bytes{cluster=\"$Cluster\"}))  *  ($Operation== bool 1)  + (min by(instance) (node_memory_memavailable_bytes{cluster=\"$Cluster\"}))  *  ($Operation== bool 2)  + (max by(instance) (node_memory_memavailable_bytes{cluster=\"$Cluster\"}))  *  ($Operation== bool 3) ",
+          "expr": "(avg by(instance) (node_memory_memavailable_bytes{cluster=\"$cluster\"}))  *  ($Operation== bool 1)  + (min by(instance) (node_memory_memavailable_bytes{cluster=\"$cluster\"}))  *  ($Operation== bool 2)  + (max by(instance) (node_memory_memavailable_bytes{cluster=\"$cluster\"}))  *  ($Operation== bool 3) ",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Available Memory",
+      "title": "Available Memory ($Operation)",
       "type": "timeseries"
     },
     {
@@ -805,7 +756,7 @@
         "type": "prometheus",
         "uid": "${Datasource}"
       },
-      "description": "Disk Throughput(read & write) by node",
+      "description": "RX/TX rate of VM's Ethernet Interface by Node",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -815,7 +766,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "bytes read (-) / write (+)",
+            "axisLabel": "bytes out (-) / in (+)",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
@@ -860,7 +811,7 @@
           {
             "matcher": {
               "id": "byRegexp",
-              "options": "/.*read*./"
+              "options": "/.*trans.*/"
             },
             "properties": [
               {
@@ -877,7 +828,7 @@
         "x": 12,
         "y": 25
       },
-      "id": 105,
+      "id": 223,
       "options": {
         "legend": {
           "calcs": [
@@ -889,7 +840,7 @@
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -901,8 +852,8 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(avg by(instance) (irate(node_disk_read_bytes_total{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (irate(node_disk_read_bytes_total{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (irate(node_disk_read_bytes_total{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
-          "legendFormat": "{{instance}} - read",
+          "expr": "(sum by(instance) (rate(node_network_receive_bytes_total{device='eth0', cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (rate(node_network_receive_bytes_total{device='eth0', cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (rate(node_network_receive_bytes_total{device='eth0', cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
+          "legendFormat": "{{instance}} - receive",
           "range": true,
           "refId": "A"
         },
@@ -912,15 +863,15 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(avg by(instance) (irate(node_disk_written_bytes_total{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (irate(node_disk_written_bytes_total{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (irate(node_disk_written_bytes_total{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
+          "expr": "(sum by(instance) (rate(node_network_transmit_bytes_total{device='eth0',cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (rate(node_network_transmit_bytes_total{device='eth0',cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (rate(node_network_transmit_bytes_total{device='eth0',cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
           "hide": false,
           "instant": false,
-          "legendFormat": "{{instance}} - write",
+          "legendFormat": "{{instance}} - transmit",
           "range": true,
           "refId": "B"
         }
       ],
-      "title": "Disk Throughput",
+      "title": "Ethernet Throughput (RX/TX) ($Operation)",
       "type": "timeseries"
     },
     {
@@ -1000,7 +951,7 @@
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -1012,13 +963,13 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(avg by(instance) (irate(node_disk_io_time_seconds_total{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (irate(node_disk_io_time_seconds_total{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (irate(node_disk_io_time_seconds_total{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
+          "expr": "(avg by(instance) (irate(node_disk_io_time_seconds_total{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (irate(node_disk_io_time_seconds_total{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (irate(node_disk_io_time_seconds_total{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
           "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Disk I/O Utilization",
+      "title": "Disk I/O Utilization ($Operation)",
       "type": "timeseries"
     },
     {
@@ -1027,7 +978,7 @@
         "type": "prometheus",
         "uid": "${Datasource}"
       },
-      "description": "NFS Read/Write Throughput by node",
+      "description": "Disk Throughput(read & write) by node",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1082,7 +1033,7 @@
           {
             "matcher": {
               "id": "byRegexp",
-              "options": "/.*read.*/"
+              "options": "/.*read*./"
             },
             "properties": [
               {
@@ -1099,7 +1050,7 @@
         "x": 12,
         "y": 33
       },
-      "id": 107,
+      "id": 105,
       "options": {
         "legend": {
           "calcs": [
@@ -1111,7 +1062,7 @@
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -1123,7 +1074,7 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(sum by(instance) (irate(node_mountstats_nfs_total_read_bytes_total{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (irate(node_mountstats_nfs_total_read_bytes_total{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (irate(node_mountstats_nfs_total_read_bytes_total{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
+          "expr": "(avg by(instance) (irate(node_disk_read_bytes_total{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (irate(node_disk_read_bytes_total{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (irate(node_disk_read_bytes_total{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
           "legendFormat": "{{instance}} - read",
           "range": true,
           "refId": "A"
@@ -1134,7 +1085,7 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(sum by(instance) (irate(node_mountstats_nfs_total_write_bytes_total{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (irate(node_mountstats_nfs_total_write_bytes_total{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (irate(node_mountstats_nfs_total_write_bytes_total{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
+          "expr": "(avg by(instance) (irate(node_disk_written_bytes_total{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (irate(node_disk_written_bytes_total{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (irate(node_disk_written_bytes_total{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
           "hide": false,
           "instant": false,
           "legendFormat": "{{instance}} - write",
@@ -1142,7 +1093,7 @@
           "refId": "B"
         }
       ],
-      "title": "NFS Throughput",
+      "title": "Disk Throughput ($Operation)",
       "type": "timeseries"
     },
     {
@@ -1235,7 +1186,7 @@
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -1247,7 +1198,7 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(avg by(instance) (irate(node_mountstats_nfs_operations_requests_total{operation=~\"^READ$\", cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (irate(node_mountstats_nfs_operations_requests_total{operation=~\"^READ$\", cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (irate(node_mountstats_nfs_operations_requests_total{operation=~\"^READ$\", cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
+          "expr": "(avg by(instance) (irate(node_mountstats_nfs_operations_requests_total{operation=~\"^READ$\", cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (irate(node_mountstats_nfs_operations_requests_total{operation=~\"^READ$\", cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (irate(node_mountstats_nfs_operations_requests_total{operation=~\"^READ$\", cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
           "legendFormat": "{{instance}} - read",
           "range": true,
           "refId": "A"
@@ -1258,7 +1209,7 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(avg by(instance) (irate(node_mountstats_nfs_operations_requests_total{operation=~\"^WRITE$\", cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (irate(node_mountstats_nfs_operations_requests_total{operation=~\"^WRITE$\", cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (irate(node_mountstats_nfs_operations_requests_total{operation=~\"^WRITE$\", cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
+          "expr": "(avg by(instance) (irate(node_mountstats_nfs_operations_requests_total{operation=~\"^WRITE$\", cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (irate(node_mountstats_nfs_operations_requests_total{operation=~\"^WRITE$\", cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (irate(node_mountstats_nfs_operations_requests_total{operation=~\"^WRITE$\", cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
           "hide": false,
           "instant": false,
           "legendFormat": "{{instance}} - write",
@@ -1266,7 +1217,131 @@
           "refId": "B"
         }
       ],
-      "title": "NFS I/O Operations",
+      "title": "NFS I/O Operations ($Operation)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "default": false,
+        "type": "prometheus",
+        "uid": "${Datasource}"
+      },
+      "description": "NFS Read/Write Throughput by node",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "bytes read (-) / write (+)",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 40,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "Bps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/.*read.*/"
+            },
+            "properties": [
+              {
+                "id": "custom.transform",
+                "value": "negative-Y"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 41
+      },
+      "id": 107,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "default": false,
+            "type": "prometheus",
+            "uid": "${Datasource}"
+          },
+          "editorMode": "code",
+          "expr": "(sum by(instance) (irate(node_mountstats_nfs_total_read_bytes_total{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (irate(node_mountstats_nfs_total_read_bytes_total{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (irate(node_mountstats_nfs_total_read_bytes_total{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
+          "legendFormat": "{{instance}} - read",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${Datasource}"
+          },
+          "editorMode": "code",
+          "expr": "(sum by(instance) (irate(node_mountstats_nfs_total_write_bytes_total{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (irate(node_mountstats_nfs_total_write_bytes_total{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (irate(node_mountstats_nfs_total_write_bytes_total{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "{{instance}} - write",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "NFS Throughput ($Operation)",
       "type": "timeseries"
     },
     {
@@ -1360,7 +1435,7 @@
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -1372,13 +1447,13 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(avg by(instance) (DCGM_FI_DEV_GPU_UTIL{cluster=\"$Cluster\"}))  *  ($Operation== bool 1)  + (min by(instance) (DCGM_FI_DEV_GPU_UTIL{cluster=\"$Cluster\"}))  *  ($Operation== bool 2)  + (max by(instance) (DCGM_FI_DEV_GPU_UTIL{cluster=\"$Cluster\"}))  *  ($Operation== bool 3) ",
+          "expr": "(avg by(instance) (DCGM_FI_DEV_GPU_UTIL{cluster=\"$cluster\"}))  *  ($Operation== bool 1)  + (min by(instance) (DCGM_FI_DEV_GPU_UTIL{cluster=\"$cluster\"}))  *  ($Operation== bool 2)  + (max by(instance) (DCGM_FI_DEV_GPU_UTIL{cluster=\"$cluster\"}))  *  ($Operation== bool 3) ",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "GPU Utilization",
+      "title": "GPU Utilization ($Operation)",
       "type": "timeseries"
     },
     {
@@ -1459,7 +1534,7 @@
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -1471,13 +1546,13 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(avg by(instance) (DCGM_FI_DEV_MEM_COPY_UTIL{cluster=\"$Cluster\"}))  *  ($Operation== bool 1)  + (min by(instance) (DCGM_FI_DEV_MEM_COPY_UTIL{cluster=\"$Cluster\"}))  *  ($Operation== bool 2)  + (max by(instance) (DCGM_FI_DEV_MEM_COPY_UTIL{cluster=\"$Cluster\"}))  *  ($Operation== bool 3) ",
+          "expr": "(avg by(instance) (DCGM_FI_DEV_MEM_COPY_UTIL{cluster=\"$cluster\"}))  *  ($Operation== bool 1)  + (min by(instance) (DCGM_FI_DEV_MEM_COPY_UTIL{cluster=\"$cluster\"}))  *  ($Operation== bool 2)  + (max by(instance) (DCGM_FI_DEV_MEM_COPY_UTIL{cluster=\"$cluster\"}))  *  ($Operation== bool 3) ",
           "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Memory Copy Utilization",
+      "title": "Memory Copy Utilization ($Operation)",
       "type": "timeseries"
     },
     {
@@ -1559,7 +1634,7 @@
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -1571,13 +1646,13 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(avg by(instance) (DCGM_FI_DEV_SM_CLOCK{cluster=\"$Cluster\"}))  *  ($Operation== bool 1)  + (min by(instance) (DCGM_FI_DEV_SM_CLOCK{cluster=\"$Cluster\"}))  *  ($Operation== bool 2)  + (max by(instance) (DCGM_FI_DEV_SM_CLOCK{cluster=\"$Cluster\"}))  *  ($Operation== bool 3) ",
+          "expr": "(avg by(instance) (DCGM_FI_DEV_SM_CLOCK{cluster=\"$cluster\"}))  *  ($Operation== bool 1)  + (min by(instance) (DCGM_FI_DEV_SM_CLOCK{cluster=\"$cluster\"}))  *  ($Operation== bool 2)  + (max by(instance) (DCGM_FI_DEV_SM_CLOCK{cluster=\"$cluster\"}))  *  ($Operation== bool 3) ",
           "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "SM Clock ",
+      "title": "SM Clock ($Operation)",
       "type": "timeseries"
     },
     {
@@ -1658,7 +1733,7 @@
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -1670,13 +1745,13 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(avg by(instance) (DCGM_FI_DEV_MEM_CLOCK{cluster=\"$Cluster\"}))  *  ($Operation== bool 1)  + (min by(instance) (DCGM_FI_DEV_MEM_CLOCK{cluster=\"$Cluster\"}))  *  ($Operation== bool 2)  + (max by(instance) (DCGM_FI_DEV_MEM_CLOCK{cluster=\"$Cluster\"}))  *  ($Operation== bool 3) ",
+          "expr": "(avg by(instance) (DCGM_FI_DEV_MEM_CLOCK{cluster=\"$cluster\"}))  *  ($Operation== bool 1)  + (min by(instance) (DCGM_FI_DEV_MEM_CLOCK{cluster=\"$cluster\"}))  *  ($Operation== bool 2)  + (max by(instance) (DCGM_FI_DEV_MEM_CLOCK{cluster=\"$cluster\"}))  *  ($Operation== bool 3) ",
           "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Memory Clock",
+      "title": "Memory Clock ($Operation)",
       "type": "timeseries"
     },
     {
@@ -1756,7 +1831,7 @@
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -1768,13 +1843,13 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(avg by(instance) (DCGM_FI_DEV_GPU_TEMP{cluster=\"$Cluster\"}))  *  ($Operation== bool 1)  + (min by(instance) (DCGM_FI_DEV_GPU_TEMP{cluster=\"$Cluster\"}))  *  ($Operation== bool 2)  + (max by(instance) (DCGM_FI_DEV_GPU_TEMP{cluster=\"$Cluster\"}))  *  ($Operation== bool 3) ",
+          "expr": "(avg by(instance) (DCGM_FI_DEV_GPU_TEMP{cluster=\"$cluster\"}))  *  ($Operation== bool 1)  + (min by(instance) (DCGM_FI_DEV_GPU_TEMP{cluster=\"$cluster\"}))  *  ($Operation== bool 2)  + (max by(instance) (DCGM_FI_DEV_GPU_TEMP{cluster=\"$cluster\"}))  *  ($Operation== bool 3) ",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "GPU Temperature",
+      "title": "GPU Temperature ($Operation)",
       "type": "timeseries"
     },
     {
@@ -1854,7 +1929,7 @@
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -1866,13 +1941,13 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(avg by(instance) (DCGM_FI_DEV_MEMORY_TEMP{cluster=\"$Cluster\"}))  *  ($Operation== bool 1)  + (min by(instance) (DCGM_FI_DEV_MEMORY_TEMP{cluster=\"$Cluster\"}))  *  ($Operation== bool 2)  + (max by(instance) (DCGM_FI_DEV_MEMORY_TEMP{cluster=\"$Cluster\"}))  *  ($Operation== bool 3) ",
+          "expr": "(avg by(instance) (DCGM_FI_DEV_MEMORY_TEMP{cluster=\"$cluster\"}))  *  ($Operation== bool 1)  + (min by(instance) (DCGM_FI_DEV_MEMORY_TEMP{cluster=\"$cluster\"}))  *  ($Operation== bool 2)  + (max by(instance) (DCGM_FI_DEV_MEMORY_TEMP{cluster=\"$cluster\"}))  *  ($Operation== bool 3) ",
           "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Memory Temperature",
+      "title": "Memory Temperature ($Operation)",
       "type": "timeseries"
     },
     {
@@ -1952,7 +2027,7 @@
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -1964,13 +2039,13 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(avg by(instance) (DCGM_FI_DEV_POWER_USAGE{cluster=\"$Cluster\"}))  *  ($Operation== bool 1)  + (min by(instance) (DCGM_FI_DEV_POWER_USAGE{cluster=\"$Cluster\"}))  *  ($Operation== bool 2)  + (max by(instance) (DCGM_FI_DEV_POWER_USAGE{cluster=\"$Cluster\"}))  *  ($Operation== bool 3) ",
+          "expr": "(avg by(instance) (DCGM_FI_DEV_POWER_USAGE{cluster=\"$cluster\"}))  *  ($Operation== bool 1)  + (min by(instance) (DCGM_FI_DEV_POWER_USAGE{cluster=\"$cluster\"}))  *  ($Operation== bool 2)  + (max by(instance) (DCGM_FI_DEV_POWER_USAGE{cluster=\"$cluster\"}))  *  ($Operation== bool 3) ",
           "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Power Usage",
+      "title": "Power Usage ($Operation)",
       "type": "timeseries"
     },
     {
@@ -2050,7 +2125,7 @@
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -2062,13 +2137,13 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(avg by(instance) (dcgm_fi_dev_total_energy_consumption{cluster=\"$Cluster\"})/ 10^3)  *  ($Operation== bool 1)  + (min by(hostname) (dcgm_fi_dev_total_energy_consumption{cluster=\"$Cluster\"})/ 10^3)  *  ($Operation== bool 2)  + (max by(instance) (dcgm_fi_dev_total_energy_consumption{cluster=\"$Cluster\"})/ 10^3)  *  ($Operation== bool 3) ",
+          "expr": "(avg by(instance) (dcgm_fi_dev_total_energy_consumption{cluster=\"$cluster\"})/ 10^3)  *  ($Operation== bool 1)  + (min by(hostname) (dcgm_fi_dev_total_energy_consumption{cluster=\"$cluster\"})/ 10^3)  *  ($Operation== bool 2)  + (max by(instance) (dcgm_fi_dev_total_energy_consumption{cluster=\"$cluster\"})/ 10^3)  *  ($Operation== bool 3) ",
           "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Total Energy Consumption",
+      "title": "Total Energy Consumption ($Operation)",
       "type": "timeseries"
     },
     {
@@ -2176,14 +2251,14 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "DCGM_FI_DEV_XID_ERRORS{cluster=\"$Cluster\"}",
+          "expr": "DCGM_FI_DEV_XID_ERRORS{cluster=\"$cluster\"}",
           "format": "table",
           "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Last XID Code Present",
+      "title": "Last XID Code Present ($Operation)",
       "transformations": [
         {
           "id": "filterFieldsByName",
@@ -2399,7 +2474,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "DCGM_FI_DEV_CLOCKS_EVENT_REASONS{cluster=\"$Cluster\"}",
+          "expr": "DCGM_FI_DEV_CLOCKS_EVENT_REASONS{cluster=\"$cluster\"}",
           "format": "table",
           "instant": false,
           "legendFormat": "{{instance}}",
@@ -2407,7 +2482,7 @@
           "refId": "A"
         }
       ],
-      "title": "Last Throttle Code",
+      "title": "Last Throttle Code ($Operation)",
       "transformations": [
         {
           "id": "filterFieldsByName",
@@ -2590,13 +2665,13 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(avg by(instance) (increase(dcgm_fi_dev_ecc_sbe_agg_total{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (increase(dcgm_fi_dev_ecc_sbe_agg_total{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (increase(dcgm_fi_dev_ecc_sbe_agg_total{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
+          "expr": "(avg by(instance) (increase(dcgm_fi_dev_ecc_sbe_agg_total{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (increase(dcgm_fi_dev_ecc_sbe_agg_total{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (increase(dcgm_fi_dev_ecc_sbe_agg_total{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
           "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "SBE Persistent ECC Errors",
+      "title": "SBE Persistent ECC Errors ($Operation)",
       "type": "timeseries"
     },
     {
@@ -2692,13 +2767,13 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(avg by(instance) (increase(dcgm_fi_dev_ecc_dbe_agg_total{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (increase(dcgm_fi_dev_ecc_dbe_agg_total{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (increase(dcgm_fi_dev_ecc_dbe_agg_total{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
+          "expr": "(avg by(instance) (increase(dcgm_fi_dev_ecc_dbe_agg_total{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (increase(dcgm_fi_dev_ecc_dbe_agg_total{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (increase(dcgm_fi_dev_ecc_dbe_agg_total{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
           "legendFormat": "{{instance}} ",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "DBE Persistent ECC Errors",
+      "title": "DBE Persistent ECC Errors ($Operation)",
       "type": "timeseries"
     },
     {
@@ -2782,7 +2857,7 @@
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -2794,13 +2869,13 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(avg by(instance) (increase(dcgm_fi_dev_ecc_sbe_vol_total{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (increase(dcgm_fi_dev_ecc_sbe_vol_total{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (increase(dcgm_fi_dev_ecc_sbe_vol_total{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
+          "expr": "(avg by(instance) (increase(dcgm_fi_dev_ecc_sbe_vol_total{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (increase(dcgm_fi_dev_ecc_sbe_vol_total{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (increase(dcgm_fi_dev_ecc_sbe_vol_total{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
           "legendFormat": "{{hostname}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "SBE Volatile ECC Errors",
+      "title": "SBE Volatile ECC Errors ($Operation)",
       "type": "timeseries"
     },
     {
@@ -2884,7 +2959,7 @@
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -2896,13 +2971,13 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(avg by(instance) (increase(dcgm_fi_dev_ecc_dbe_vol_total{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (increase(dcgm_fi_dev_ecc_dbe_vol_total{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (increase(dcgm_fi_dev_ecc_dbe_vol_total{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
+          "expr": "(avg by(instance) (increase(dcgm_fi_dev_ecc_dbe_vol_total{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (increase(dcgm_fi_dev_ecc_dbe_vol_total{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (increase(dcgm_fi_dev_ecc_dbe_vol_total{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
           "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "DBE Volatile ECC Errors",
+      "title": "DBE Volatile ECC Errors ($Operation)",
       "type": "timeseries"
     },
     {
@@ -2985,7 +3060,7 @@
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -2997,13 +3072,13 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(avg by(instance) (increase(dcgm_fi_dev_thermal_violation{cluster=\"$Cluster\"}[$__rate_interval]) / 1e9)) * ($Operation== bool 1) + (min by(instance) (increase(dcgm_fi_dev_thermal_violation{cluster=\"$Cluster\"}[$__rate_interval]) / 1e9)) * ($Operation== bool 2) + (max by(instance) (increase(dcgm_fi_dev_thermal_violation{cluster=\"$Cluster\"}[$__rate_interval]) / 1e9)) * ($Operation== bool 3)",
+          "expr": "(avg by(instance) (increase(dcgm_fi_dev_thermal_violation{cluster=\"$cluster\"}[$__rate_interval]) / 1e9)) * ($Operation== bool 1) + (min by(instance) (increase(dcgm_fi_dev_thermal_violation{cluster=\"$cluster\"}[$__rate_interval]) / 1e9)) * ($Operation== bool 2) + (max by(instance) (increase(dcgm_fi_dev_thermal_violation{cluster=\"$cluster\"}[$__rate_interval]) / 1e9)) * ($Operation== bool 3)",
           "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Thermal Violation Elapsed Time",
+      "title": "Thermal Violation Elapsed Time ($Operation)",
       "type": "timeseries"
     },
     {
@@ -3086,7 +3161,7 @@
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -3098,13 +3173,13 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(avg by(instance) (increase(dcgm_fi_dev_power_violation{cluster=\"$Cluster\"}[$__rate_interval]) / 1e9)) * ($Operation== bool 1) + (min by(instance) (increase(dcgm_fi_dev_power_violation{cluster=\"$Cluster\"}[$__rate_interval]) / 1e9)) * ($Operation== bool 2) + (max by(instance) (increase(dcgm_fi_dev_power_violation{cluster=\"$Cluster\"}[$__rate_interval]) / 1e9)) * ($Operation== bool 3)",
+          "expr": "(avg by(instance) (increase(dcgm_fi_dev_power_violation{cluster=\"$cluster\"}[$__rate_interval]) / 1e9)) * ($Operation== bool 1) + (min by(instance) (increase(dcgm_fi_dev_power_violation{cluster=\"$cluster\"}[$__rate_interval]) / 1e9)) * ($Operation== bool 2) + (max by(instance) (increase(dcgm_fi_dev_power_violation{cluster=\"$cluster\"}[$__rate_interval]) / 1e9)) * ($Operation== bool 3)",
           "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Power Violation Elapsed Time",
+      "title": "Power Violation Elapsed Time ($Operation)",
       "type": "timeseries"
     },
     {
@@ -3251,7 +3326,7 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "min by (instance) (node_infiniband_physical_state_id{device!=\"mlx5_an0\", cluster=\"$Cluster\"})",
+          "expr": "min by (instance) (node_infiniband_physical_state_id{device!=\"mlx5_an0\", cluster=\"$cluster\"})",
           "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
@@ -3367,7 +3442,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "clamp_max(increase(node_infiniband_link_downed_total{device!=\"mlx5_an0\", cluster=\"$Cluster\"}[$__rate_interval]), 1)",
+          "expr": "clamp_max(increase(node_infiniband_link_downed_total{device!=\"mlx5_an0\", cluster=\"$cluster\"}[$__rate_interval]), 1)",
           "format": "table",
           "instant": false,
           "legendFormat": "{{instance}}",
@@ -3568,7 +3643,7 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(avg by(instance) (rate(node_infiniband_port_data_received_bytes_total{device!=\"mlx5_an0\",cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (rate(node_infiniband_port_data_received_bytes_total{device!=\"mlx5_an0\",cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (rate(node_infiniband_port_data_received_bytes_total{device!=\"mlx5_an0\",cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
+          "expr": "(avg by(instance) (rate(node_infiniband_port_data_received_bytes_total{device!=\"mlx5_an0\",cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (rate(node_infiniband_port_data_received_bytes_total{device!=\"mlx5_an0\",cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (rate(node_infiniband_port_data_received_bytes_total{device!=\"mlx5_an0\",cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
           "legendFormat": "{{instance}} - receive",
           "range": true,
           "refId": "A"
@@ -3579,7 +3654,7 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(avg by(instance) (rate(node_infiniband_port_data_transmitted_bytes_total{device!=\"mlx5_an0\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (rate(node_infiniband_port_data_transmitted_bytes_total{device!=\"mlx5_an0\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (rate(node_infiniband_port_data_transmitted_bytes_total{device!=\"mlx5_an0\"}[$__rate_interval]))) * ($Operation== bool 3)",
+          "expr": "(avg by(instance) (rate(node_infiniband_port_data_transmitted_bytes_total{device!=\"mlx5_an0\", cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (rate(node_infiniband_port_data_transmitted_bytes_total{device!=\"mlx5_an0\", cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (rate(node_infiniband_port_data_transmitted_bytes_total{device!=\"mlx5_an0\", cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
           "hide": false,
           "instant": false,
           "legendFormat": "{{instance}} - transmit",
@@ -3587,7 +3662,7 @@
           "refId": "B"
         }
       ],
-      "title": "IB Throughput",
+      "title": "IB Throughput ($Operation)",
       "type": "timeseries"
     },
     {
@@ -3663,7 +3738,9 @@
           ],
           "displayMode": "table",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": true,
+          "sortBy": "Name",
+          "sortDesc": true
         },
         "tooltip": {
           "mode": "multi",
@@ -3678,13 +3755,13 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(avg by(instance) (increase(node_infiniband_port_errors_received_total{device!=\"mlx5_an0\", cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (increase(node_infiniband_port_errors_received_total{device!=\"mlx5_an0\", cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (increase(node_infiniband_port_errors_received_total{device!=\"mlx5_an0\", cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
+          "expr": "(avg by(instance) (increase(node_infiniband_port_errors_received_total{device!=\"mlx5_an0\", cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (increase(node_infiniband_port_errors_received_total{device!=\"mlx5_an0\", cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (increase(node_infiniband_port_errors_received_total{device!=\"mlx5_an0\", cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
           "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "IB Port Receive Errors",
+      "title": "IB Port Receive Errors ($Operation)",
       "type": "timeseries"
     },
     {
@@ -3775,13 +3852,13 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(avg by(instance) (increase(node_infiniband_port_constraint_errors_received_total{device!=\"mlx5_an0\",cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (increase(node_infiniband_port_constraint_errors_received_total{device!=\"mlx5_an0\",cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (increase(node_infiniband_port_constraint_errors_received_total{device!=\"mlx5_an0\",cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
+          "expr": "(avg by(instance) (increase(node_infiniband_port_constraint_errors_received_total{device!=\"mlx5_an0\",cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (increase(node_infiniband_port_constraint_errors_received_total{device!=\"mlx5_an0\",cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (increase(node_infiniband_port_constraint_errors_received_total{device!=\"mlx5_an0\",cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
           "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "IB Port Constraint Errors",
+      "title": "IB Port Constraint Errors ($Operation)",
       "type": "timeseries"
     },
     {
@@ -3873,13 +3950,13 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(avg by(instance) (rate(node_infiniband_port_transmit_wait_total{device!=\"mlx5_an0\",cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (rate(node_infiniband_port_transmit_wait_total{device!=\"mlx5_an0\",cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (rate(node_infiniband_port_transmit_wait_total{device!=\"mlx5_an0\",cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
+          "expr": "(avg by(instance) (rate(node_infiniband_port_transmit_wait_total{device!=\"mlx5_an0\",cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (rate(node_infiniband_port_transmit_wait_total{device!=\"mlx5_an0\",cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (rate(node_infiniband_port_transmit_wait_total{device!=\"mlx5_an0\",cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
           "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "IB Port Transmit Wait",
+      "title": "IB Port Transmit Wait ($Operation)",
       "type": "timeseries"
     },
     {
@@ -3970,13 +4047,13 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(avg by(instance) (increase(node_infiniband_port_discards_transmitted_total{device!=\"mlx5_an0\",cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (increase(node_infiniband_port_discards_transmitted_total{device!=\"mlx5_an0\",cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (increase(node_infiniband_port_discards_transmitted_total{device!=\"mlx5_an0\",cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
+          "expr": "(avg by(instance) (increase(node_infiniband_port_discards_transmitted_total{device!=\"mlx5_an0\",cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (increase(node_infiniband_port_discards_transmitted_total{device!=\"mlx5_an0\",cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (increase(node_infiniband_port_discards_transmitted_total{device!=\"mlx5_an0\",cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
           "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "IB Port Discards",
+      "title": "IB Port Discards ($Operation)",
       "type": "timeseries"
     },
     {
@@ -4099,7 +4176,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "clamp_max(increase(dcgm_fi_dev_nvlink_count_link_recovery_failed_events{cluster=\"$Cluster\"}[$__rate_interval]), 1)",
+          "expr": "clamp_max(increase(dcgm_fi_dev_nvlink_count_link_recovery_failed_events{cluster=\"$cluster\"}[$__rate_interval]), 1)",
           "format": "table",
           "instant": false,
           "legendFormat": "{{instance}}",
@@ -4107,7 +4184,7 @@
           "refId": "A"
         }
       ],
-      "title": "Last NVLink Recovery Failed Event",
+      "title": "Last NVLink Recovery Failed Event ($Operation)",
       "transformations": [
         {
           "id": "filterFieldsByName",
@@ -4257,7 +4334,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -4304,7 +4382,7 @@
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -4323,7 +4401,7 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(avg by(instance) (increase(dcgm_fi_dev_nvlink_count_local_link_integrity_errors{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (increase(dcgm_fi_dev_nvlink_count_local_link_integrity_errors{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (increase(dcgm_fi_dev_nvlink_count_local_link_integrity_errors{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
+          "expr": "(avg by(instance) (increase(dcgm_fi_dev_nvlink_count_local_link_integrity_errors{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (increase(dcgm_fi_dev_nvlink_count_local_link_integrity_errors{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (increase(dcgm_fi_dev_nvlink_count_local_link_integrity_errors{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
           "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
@@ -4331,7 +4409,7 @@
       ],
       "thresholds": [],
       "timeRegions": [],
-      "title": "Link Integrity Errors",
+      "title": "Link Integrity Errors ($Operation)",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -4476,7 +4554,7 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(avg by(instance) (rate(dcgm_fi_prof_nvlink_rx_bytes{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (rate(dcgm_fi_prof_nvlink_rx_bytes{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (rate(dcgm_fi_prof_nvlink_rx_bytes{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
+          "expr": "(avg by(instance) (rate(dcgm_fi_prof_nvlink_rx_bytes{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (rate(dcgm_fi_prof_nvlink_rx_bytes{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (rate(dcgm_fi_prof_nvlink_rx_bytes{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
           "legendFormat": "{{instance}} - receive ",
           "range": true,
           "refId": "A"
@@ -4487,7 +4565,7 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(avg by(instance) (rate(dcgm_fi_prof_nvlink_tx_bytes{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (rate(dcgm_fi_prof_nvlink_tx_bytes{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (rate(dcgm_fi_prof_nvlink_tx_bytes{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
+          "expr": "(avg by(instance) (rate(dcgm_fi_prof_nvlink_tx_bytes{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (rate(dcgm_fi_prof_nvlink_tx_bytes{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (rate(dcgm_fi_prof_nvlink_tx_bytes{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
           "hide": false,
           "instant": false,
           "legendFormat": "{{instance}} - transmit",
@@ -4495,7 +4573,7 @@
           "refId": "B"
         }
       ],
-      "title": "NVLink Throughput",
+      "title": "NVLink Throughput ($Operation)",
       "type": "timeseries"
     },
     {
@@ -4554,7 +4632,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -4601,7 +4680,7 @@
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -4620,7 +4699,7 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(avg by(instance) (increase(dcgm_fi_dev_nvlink_count_rx_errors{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (increase(dcgm_fi_dev_nvlink_count_rx_errors{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (increase(dcgm_fi_dev_nvlink_count_rx_errors{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
+          "expr": "(avg by(instance) (increase(dcgm_fi_dev_nvlink_count_rx_errors{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (increase(dcgm_fi_dev_nvlink_count_rx_errors{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (increase(dcgm_fi_dev_nvlink_count_rx_errors{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
           "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
@@ -4628,7 +4707,7 @@
       ],
       "thresholds": [],
       "timeRegions": [],
-      "title": "Link RX Errors",
+      "title": "Link RX Errors ($Operation)",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -4719,7 +4798,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -4766,7 +4846,7 @@
           "showLegend": true
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -4785,7 +4865,7 @@
             "uid": "${Datasource}"
           },
           "editorMode": "code",
-          "expr": "(avg by(instance) (increase(dcgm_fi_dev_nvlink_count_tx_discards{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (increase(dcgm_fi_dev_nvlink_count_tx_discards{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (increase(dcgm_fi_dev_nvlink_count_tx_discards{cluster=\"$Cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
+          "expr": "(avg by(instance) (increase(dcgm_fi_dev_nvlink_count_tx_discards{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 1) + (min by(instance) (increase(dcgm_fi_dev_nvlink_count_tx_discards{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 2) + (max by(instance) (increase(dcgm_fi_dev_nvlink_count_tx_discards{cluster=\"$cluster\"}[$__rate_interval]))) * ($Operation== bool 3)",
           "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
@@ -4793,7 +4873,7 @@
       ],
       "thresholds": [],
       "timeRegions": [],
-      "title": "Port TX Discards",
+      "title": "Port TX Discards ($Operation)",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -4897,9 +4977,9 @@
         "description": "cluster name",
         "hide": 0,
         "includeAll": true,
-        "label": "",
+        "label": "Cluster",
         "multi": false,
-        "name": "Cluster",
+        "name": "cluster",
         "options": [],
         "query": {
           "qryType": 5,
@@ -4947,8 +5027,8 @@
     ]
   },
   "time": {
-    "from": "2025-05-12T14:48:41.276Z",
-    "to": "2025-05-12T15:48:41.276Z"
+    "from": "now-30m",
+    "to": "now"
   },
   "timepicker": {
     "refresh_intervals": [
@@ -4961,6 +5041,6 @@
   "timezone": "browser",
   "title": "Cluster View (Time Series)",
   "uid": "ncgMA4Z4k2xx",
-  "version": 2,
+  "version": 6,
   "weekStart": ""
 }
